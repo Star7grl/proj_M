@@ -4,14 +4,20 @@ import apiClient from '../config/apiClient';
 export const useUserStore = create((set, get) => ({
   isAuth: false,
   isLoading: true,
+  user: null, // Добавляем поле для данных пользователя
 
   // Проверка аутентификации при загрузке
   checkAuth: async () => {
     try {
-      await apiClient.get('/api/auth/check', { withCredentials: true });
-      set({ isAuth: true, isLoading: false });
-    } catch {
-      set({ isAuth: false, isLoading: false });
+      const response = await apiClient.get('/api/auth/me');
+      if (response.status === 200) {
+        set({ isAuth: true, user: response.data, isLoading: false });
+      } else if (response.status === 401) {
+        set({ isAuth: false, user: null, isLoading: false });
+      }
+    } catch (error) {
+      console.error('Неожиданная ошибка при проверке аутентификации:', error);
+      set({ isAuth: false, user: null, isLoading: false });
     }
   },
 
@@ -33,10 +39,9 @@ export const useUserStore = create((set, get) => ({
       const response = await apiClient.post('/api/auth/login', data, { 
         withCredentials: true 
       });
-      
       if (response.status >= 200 && response.status < 300) {
-        set({ isAuth: true });
-        await get().checkAuth(); // Используем get() вместо прямого вызова
+        set({ isAuth: true, user: response.data.user });
+        await get().checkAuth(); // Проверяем аутентификацию и обновляем данные
       }
       return response;
     } catch (error) {
@@ -48,14 +53,14 @@ export const useUserStore = create((set, get) => ({
   logout: async () => {
     try {
       await apiClient.post('/api/auth/logout', {}, { withCredentials: true });
-      set({ isAuth: false });
+      set({ isAuth: false, user: null });
     } catch (error) {
       console.error('Logout failed:', error);
       throw error;
     }
   },
+
+  setUser: (userData) => set({ user: userData }), // Новый метод для обновления данных пользователя
 }));
 
-
 export default useUserStore;
-

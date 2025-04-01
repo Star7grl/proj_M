@@ -10,4 +10,22 @@ import axios from "axios";
     //     'Accept': 'application/json'
     //   }
 });
+
+
+apiClient.interceptors.response.use(
+    (response) => {
+      // Успешные ответы (статус 200-299) проходят без изменений
+      return response;
+    },
+    (error) => {
+      // Проверяем, есть ли ответ и статус 401
+      if (error.response && error.response.status === 401) {
+        // Возвращаем "успешный" объект вместо ошибки
+        return Promise.resolve({ status: 401, data: null });
+      }
+      // Для остальных ошибок сохраняем стандартное поведение
+      return Promise.reject(error);
+    }
+  );
+
 export default apiClient; // Экспорт по умолчанию

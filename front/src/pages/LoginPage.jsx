@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import useUserStore from '../store/UserStore'; // Импортируем наше хранилище
 import '../styles/LoginPage.css';
@@ -7,36 +7,31 @@ import bg from '../assets/images/номера.png';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const { login, isAuth } = useUserStore(); // Используем методы из хранилища
+  const { login, isAuth } = useUserStore();
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate('/');
+    }
+  }, [isAuth, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
-      // Используем метод login из нашего хранилища
       await login({ username, password });
-      
-      // Если авторизация успешна (isAuth = true), перенаправляем
-      if (isAuth) {
-        const from = location.state?.from?.pathname || '/';
-        navigate(from, { replace: true });
-      } else {
-        setError('Неверные учетные данные');
-      }
     } catch (error) {
-      // Обрабатываем ошибку CORS и другие ошибки
       if (error.message.includes('Network Error') || !error.response) {
         setError('Проблемы с соединением. Проверьте CORS на сервере.');
       } else {
         setError(
           error.response?.data?.message || 
           error.message || 
-          'Произошла ошибка при входе'
+          'Неверные учетные данные'
         );
       }
     }
@@ -76,6 +71,9 @@ const LoginPage = () => {
         <div className="register-link">
           <Link to="/register">Зарегистрироваться</Link>
         </div>
+        <div className="forgot-password-link">
+              <Link to="/forgot-password">Забыл пароль?</Link>
+            </div>
       </form>
     </div>
   );

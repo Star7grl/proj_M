@@ -9,7 +9,7 @@ import logo from '../assets/images/logo.png';
 const Header = () => {
   const navigate = useNavigate();
   // Берем нужные данные из хранилища
-  const { isAuth, isLoading, checkAuth, logout } = useUserStore();
+  const { isAuth, user, isLoading, checkAuth, logout } = useUserStore();
 
   // Проверяем авторизацию при загрузке
   useEffect(() => {
@@ -70,7 +70,7 @@ const Header = () => {
           ) : (
             <>
               {/* Если авторизован - показываем профиль и кнопку выхода */}
-              <li><Link to="/profile">Профиль</Link></li>
+              <li><Link to="/profile">{user?.username || 'Профиль'}</Link></li>
               <li>
                 <button onClick={handleLogout} className="logout-button">
                   Выйти

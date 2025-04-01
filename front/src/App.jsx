@@ -4,8 +4,10 @@ import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import ServicesPage from './pages/ServicesPage';
+import ProfilePage from './pages/ProfilePage';
+import AdminPanelPage from './pages/AdminPanelPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage'; // Импортируем страницу
 import Header from './components/Header';
-import Footer from './components/Footer';
 
 const App = () => {
   return (
@@ -16,10 +18,11 @@ const App = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/services" element={<ServicesPage />} />
-        {/* Добавьте это, чтобы перенаправлять с /login на / после авторизации */}
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/admin" element={<AdminPanelPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} /> {/* Новый маршрут */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-      <Footer />
     </Router>
   );
 };
