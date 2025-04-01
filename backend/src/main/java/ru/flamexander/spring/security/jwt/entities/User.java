@@ -3,7 +3,6 @@ package ru.flamexander.spring.security.jwt.entities;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity
 @Data
@@ -30,9 +29,9 @@ public class User {
     @Column(name = "firstName")
     private String firstName;
 
-
     @Column(name = "lastName")
     private String lastName;
 
+    @Column(name = "resetCode") // Новое поле для кода восстановления
+    private String resetCode;
 }
-

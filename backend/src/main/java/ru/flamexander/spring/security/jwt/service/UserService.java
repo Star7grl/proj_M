@@ -18,17 +18,16 @@ import ru.flamexander.spring.security.jwt.entities.User;
 import ru.flamexander.spring.security.jwt.repositories.UserRepository;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService; // Добавляем EmailService
 
-    // Новое: параметры администратора из application.properties
     @Value("${admin.username}")
     private String adminUsername;
 
@@ -42,13 +41,13 @@ public class UserService implements UserDetailsService {
     private String adminRole;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
-    // Новое: создание администратора при запуске приложения
     @PostConstruct
     public void initAdmin() {
         if (!userRepository.findByUsername(adminUsername).isPresent()) {
@@ -113,6 +112,7 @@ public class UserService implements UserDetailsService {
         }
         return null;
     }
+
     public User updateUserProfile(Long id, String firstName, String lastName) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
@@ -124,162 +124,36 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
+    // Новые методы для восстановления пароля
+    public boolean sendResetCode(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            String code = generateRandomCode();
+            user.setResetCode(code);
+            userRepository.save(user);
+            emailService.sendResetCode(email, code);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean verifyResetCode(String email, String code) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        return optionalUser.isPresent() && code.equals(optionalUser.get().getResetCode());
+    }
+
+    public void resetPassword(String email, String newPassword) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setPassword(passwordEncoder.encode(newPassword));
+            user.setResetCode(null); // Очищаем код после использования
+            userRepository.save(user);
+        }
+    }
+
+    private String generateRandomCode() {
+        return String.format("%06d", new Random().nextInt(999999));
+    }
 }
-
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        // Пример загрузки пользователя
-//        if (username.equals("user")) {
-//            return new org.springframework.security.core.userdetails.User("user", "password", Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
-//        } else if (username.equals("admin")) {
-//            return new org.springframework.security.core.userdetails.User("admin", "password", List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN")));
-//        } else {
-//            throw new UsernameNotFoundException("Пользователь не найден");
-//        }
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-////package ru.flamexander.spring.security.jwt.service;
-////
-//import lombok.RequiredArgsConstructor;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.annotation.Lazy;
-//import org.springframework.security.core.authority.SimpleGrantedAuthority;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.security.core.userdetails.UsernameNotFoundException;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//import ru.flamexander.spring.security.jwt.dtos.RegistrationUserDto;
-//import ru.flamexander.spring.security.jwt.entities.User;
-//import ru.flamexander.spring.security.jwt.repositories.UserRepository;
-//
-//import java.util.List;
-//import java.util.Optional;
-//import java.util.stream.Collectors;
-//
-//@Service
-//public class UserService implements UserDetailsService {
-//    private UserRepository userRepository;
-//    private RoleService roleService;
-//    private PasswordEncoder passwordEncoder;
-//
-//    @Autowired
-//    public void setUserRepository(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-//
-//    @Autowired
-//    public void setRoleService(RoleService roleService) {
-//        this.roleService = roleService;
-//    }
-//
-//    @Autowired
-//    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-//        this.passwordEncoder = passwordEncoder;
-//    }
-//
-//    public Optional<User> findByUsername(String username) {
-//        return userRepository.findByUsername(username);
-//    }
-//    public Optional<User> findById(Long id) {
-//        return userRepository.findById(id);
-//    }
-//
-//    @Override
-//    @Transactional
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        User user = findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(
-//                String.format("Пользователь '%s' не найден", username)
-//        ));
-//        return new org.springframework.security.core.userdetails.User(
-//                user.getUsername(),
-//                user.getPassword(),
-//                user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList())
-//        );
-//    }
-//
-//    public User createNewUser(RegistrationUserDto registrationUserDto) {
-//        User user = new User();
-//        user.setUsername(registrationUserDto.getUsername());
-//        user.setEmail(registrationUserDto.getEmail());
-//        user.setPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
-//        user.setRoles(List.of(roleService.getUserRole()));
-//        return userRepository.save(user);
-//    }
-//    public boolean deleteById(Long id) {
-//        if (userRepository.existsById(id)) {
-//            userRepository.deleteById(id);
-//            return true; // Удаление прошло успешно
-//        }
-//        return false; // Пользователь не найден
-//    }
-//    public User updateUser(Long id, User userDetails) {
-//        Optional<User> optionalUser = userRepository.findById(id);
-//        if (optionalUser.isPresent()) {
-//            User userToUpdate = optionalUser.get();
-//            userToUpdate.setUsername(userDetails.getUsername());
-//            userToUpdate.setEmail(userDetails.getEmail());
-//            // Обновите другие поля по мере необходимости
-//            return userRepository.save(userToUpdate);
-//        }
-//        return null; // Или выбросьте исключение, если пользователь не найден
-//    }
-//}
-//
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//import ru.flamexander.spring.security.jwt.entities.User;
-//import ru.flamexander.spring.security.jwt.repositories.UserRepository;
-//
-//import java.util.List;
-//import java.util.Optional;
-//
-//@Service
-//public class UserService {
-//    private final UserRepository userRepository;
-//
-//    @Autowired
-//    public UserService(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-//
-//    public List<User> getAllUsers() {
-//        return userRepository.findAll();
-//    }
-//
-//    public Optional<User> getUserById(Long id) {
-//        return userRepository.findById(id);
-//    }
-//
-//    public User createUser(User user) {
-//        return userRepository.save(user);
-//    }
-//
-//    public User updateUser(User user) {
-//        return userRepository.save(user);
-//    }
-//
-//    public void deleteUser(Long id) {
-//        userRepository.deleteById(id);
-//    }
-//}

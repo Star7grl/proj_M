@@ -13,7 +13,7 @@ public class RoomDto {
     private Integer roomId;
     private String roomTitle;
     private String roomType;
-    private String description;
+    private String description;//
     private Double price;
     private String status; // Можно использовать Enum
 }
