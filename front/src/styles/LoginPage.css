@@ -79,7 +79,9 @@ border-radius: 20px;
   .register-link {
     font-size: 14px;
     color: #666;
-    margin-top: 10px;
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
   }
   
   .register-link a {

@@ -1,0 +1,132 @@
+/* Base styles */
+.contacts-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  
+  /* Hero Section */
+  .hero {
+    position: relative;
+    margin-bottom: 80px;
+  }
+  
+  .hero img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  
+  .hero-content h1 {
+    color: white;
+    font-size: 3rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Map Section */
+  .map-container {
+    margin: 80px 0;
+    position: relative;
+    overflow: hidden;
+    height: 400px;
+  }
+  
+  .map-container iframe {
+    border: none;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Contact Section */
+  h2{
+    color: black;
+  }
+  .contact-section {
+    margin: 130px 0;
+    text-align: center;
+  }
+  
+  .contact-section h2 {
+    margin-bottom: 50px;
+    font-size: 2rem;
+  }
+  
+  .contact-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    align-items: center;
+  }
+  
+  .contact-image {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .contact-image img {
+    width: 66.66%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .contact-form {
+    flex: 2;
+    min-width: 300px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 18px 30px;
+    border-radius: 30px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+  }
+  
+  .form-group textarea {
+    resize: vertical;
+    min-height: 150px;
+  }
+  
+  button[type="submit"] {
+    background: #790bb8;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  button[type="submit"]:hover {
+    box-shadow: 0px 8px 23px rgba(40, 106, 222, 0.32);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .contact-content {
+      flex-direction: column;
+    }
+    
+    .contact-image {
+      margin-bottom: 30px;
+    }
+    
+    .contact-image img {
+      width: 100%;
+      max-width: 400px;
+    }
+  }
