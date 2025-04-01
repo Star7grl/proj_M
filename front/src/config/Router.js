@@ -22,6 +22,10 @@ export const publicRoutes= [
         title:"Номера",
         path: "/rooms",
         page: RoomsPage
+    }, {
+        title:"Контакты",
+        path: "/contacts",
+        page: ContactsPagePage
     }
 ];
 

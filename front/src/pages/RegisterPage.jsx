@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/RegisterPage.css';
 import useUserStore from '../store/UserStore'; // Добавляем использование хранилища
-import '../styles/LoginPage.css';
+
 import bg from '../assets/images/номера.png'; 
 
 const RegisterPage = () => {
@@ -48,9 +48,11 @@ const RegisterPage = () => {
 
   return (
     <div className="register-container">
+
       <div className="bg">
         <img src={bg} alt="" className="bg" />
       </div>
+      
       <form onSubmit={handleSubmit} className="register-form">
         <h2>Регистрация</h2>
         {errors.general && <div className="error-message">{errors.general}</div>}
@@ -108,7 +110,7 @@ const RegisterPage = () => {
 
         <button 
           type="submit" 
-          className="btn btn-primary"
+          className="btn btn-primary register-button"
           disabled={isLoading}
         >
           {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}

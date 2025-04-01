@@ -6,8 +6,10 @@ import HomePage from './pages/HomePage';
 import ServicesPage from './pages/ServicesPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPanelPage from './pages/AdminPanelPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage'; // Импортируем страницу
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ContactsPage from './pages/ContactsPage'; // Импортируем страницу
 import Header from './components/Header';
+import Footer from './components/Footer';
 
 const App = () => {
   return (
@@ -19,10 +21,12 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/contacts" element={<ContactsPage />} />
         <Route path="/admin" element={<AdminPanelPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} /> {/* Новый маршрут */}
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} /> 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
+      <Footer />
     </Router>
   );
 };

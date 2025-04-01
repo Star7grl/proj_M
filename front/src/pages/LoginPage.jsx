@@ -70,10 +70,8 @@ const LoginPage = () => {
         
         <div className="register-link">
           <Link to="/register">Зарегистрироваться</Link>
+          <Link to="/forgot-password">Забыли пароль?</Link>
         </div>
-        <div className="forgot-password-link">
-              <Link to="/forgot-password">Забыл пароль?</Link>
-            </div>
       </form>
     </div>
   );
