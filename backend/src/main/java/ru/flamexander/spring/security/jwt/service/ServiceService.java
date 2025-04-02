@@ -48,6 +48,13 @@
             serviceRepository.deleteById(id);
         }
 
+        
+        
+        
+        
+        
+        
+        
         private ServiceDto convertToDto(Services service) {
             ServiceDto dto = new ServiceDto();
             dto.setServiceId(service.getServiceId());
@@ -60,7 +67,7 @@
             return serviceRepository.findByServiceNameContainingIgnoreCase(serviceName)
                     .stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList());                                                             
         }
 
     }
