@@ -53,11 +53,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/public/**").permitAll()
-                .antMatchers("/api/auth/**").permitAll() // Разрешаем доступ к /api/auth/** без аутентификации
-                .antMatchers("/api/services/**").permitAll()
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/services/**").permitAll() // Доступ для всех к сервисам
+                .antMatchers("/api/admin/**").hasRole("ADMIN") // Доступ только для админов
                 .antMatchers("/private/**").authenticated()
-                .antMatchers("/api/auth/me").authenticated() // Требуем аутентификацию для /api/auth/me
-                .antMatchers("/api/users/profile/**").authenticated() // Добавьте это правило
+                .antMatchers("/api/auth/me").authenticated()
+                .antMatchers("/api/users/profile/**").authenticated()
                 .anyRequest().denyAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

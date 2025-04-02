@@ -28,18 +28,16 @@ public class ServiceController {
         return serviceService.findById(id);
     }
 
-    //localhost:8080/api/services/add
     @PostMapping("/add")
     public ServiceDto save(@RequestBody ServiceDto serviceDto) {
         return serviceService.save(serviceDto);
     }
 
-
     @PutMapping("/update/{id}")
-    public Services updateService(@PathVariable Long id, @RequestBody Services service) {
-        // Возможно, здесь вам потребуется дополнительно установить id для сущности, если оно не передается в теле запроса
-        service.setServiceId(id); // Предполагая, что у вас есть метод setServiceId
-        return serviceService.updateService(service);
+    public ResponseEntity<ServiceDto> updateService(@PathVariable Long id, @RequestBody ServiceDto serviceDto) {
+        serviceDto.setServiceId(id);
+        ServiceDto updatedService = serviceService.updateService(serviceDto);
+        return ResponseEntity.ok(updatedService);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -47,8 +45,6 @@ public class ServiceController {
         serviceService.deleteById(id);
     }
 
-
-    //http://localhost:8080/api/services/search?name=Уборка
     @GetMapping("/search")
     public ResponseEntity<List<ServiceDto>> searchServices(@RequestParam(required = false) String name) {
         if (name != null && !name.isEmpty()) {
@@ -56,5 +52,4 @@ public class ServiceController {
         }
         return ResponseEntity.ok(serviceService.findAll());
     }
-
 }
