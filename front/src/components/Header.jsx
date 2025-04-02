@@ -64,7 +64,7 @@ const Header = () => {
                   Войти
                 </button>
                 <button onClick={handleLogout} className="button book-button">
-                  Зарегистрироваться
+                  Забронировать
                 </button>
             </>
           ) : (

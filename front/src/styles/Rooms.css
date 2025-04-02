@@ -1,0 +1,131 @@
+.cards_stay {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 80px;
+  }
+  
+  .card_stay {
+    margin-top: 40px;
+    display: flex;
+    max-width: 1140px;
+    height: 500px;
+    margin-bottom: 20px;
+  }
+  
+  .card_stay img {
+    width: 45%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  .about_text {
+    width: 55%;
+    background-color: #EAEAEA;
+    padding: 60px;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center; 
+  }
+  
+  .about_text h2, .about_text h3, .about_text p {
+    margin: 10px 0;
+  }
+  
+  .about_text h2 {
+    font-weight: 600;
+    font-size: 40px;
+    margin-bottom: 30px;
+  }
+  
+  .about_text h3 {
+    font-weight: 700;
+    font-size: 25px;
+  }
+  
+  .about_text button {
+    background-color: #790BB8; 
+    color: white;
+    padding: 20px 10px;
+    border: none;
+    cursor: pointer;
+    margin-top: 30px;
+    font-size: 19px;
+  }
+  
+  .about_text button a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  footer {
+    margin-top: 80px;
+  }
+  
+  /* Адаптивность для 768px */
+  @media (max-width: 768px) {
+    .card_stay {
+        flex-direction: column;
+        height: auto;
+        max-width: 100%;
+    }
+  
+    .card_stay img {
+        width: 100%;
+        height: auto;
+    }
+  
+    .about_text {
+        width: 100%;
+        padding: 30px;
+    }
+  
+    .about_text h2 {
+        font-size: 32px;
+    }
+  
+    .about_text h3 {
+        font-size: 22px;
+    }
+  
+    .about_text button {
+        padding: 15px 10px;
+        font-size: 17px;
+    }
+  
+    .reverse_sh {
+        flex-direction: column-reverse;
+    }
+  }
+  
+  /* Адаптивность для 320px */
+  @media (max-width: 320px) {
+    .cards_stay {
+        margin-top: 40px;
+    }
+  
+    .card_stay {
+        margin-top: 20px;
+        border: 15px solid #EAEAEA;
+    }
+  
+    .about_text {
+        padding: 20px;
+    }
+  
+    .about_text h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+  
+    .about_text h3 {
+        font-size: 18px;
+    }
+  
+    .about_text button {
+        padding: 15px 10px;
+        margin-top: 20px;
+        font-size: 16px;
+    }
+  }
+  

@@ -11,7 +11,7 @@
 .register-form {
   width: 500px;
   padding: 40px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
   position: absolute;
@@ -74,14 +74,22 @@
 
 .register-button:hover {
   background-color: #6d2ba2;
-  transform: translateY(-2px);
+
 }
 
 .login-link {
   text-align: center;
   margin-top: 20px;
-  color: rgba(255, 255, 255);
   font-size: 14px;
+}
+
+.login-link a {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.login-link a:hover {
+  color: rgba(148, 148, 148, 0.68);
 }
 
 /* Адаптивность */

@@ -4,6 +4,7 @@ import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import ServicesPage from './pages/ServicesPage';
+import RoomsPage from './pages/RoomsPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPanelPage from './pages/AdminPanelPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/services" element={<ServicesPage />} />
+        <Route path="/rooms" element={<RoomsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="/admin" element={<AdminPanelPage />} />

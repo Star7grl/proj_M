@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/RegisterPage.css';
-import useUserStore from '../store/UserStore'; // Добавляем использование хранилища
-
+import useUserStore from '../store/UserStore'; 
 import bg from '../assets/images/номера.png'; 
 
 const RegisterPage = () => {
