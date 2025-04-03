@@ -72,8 +72,8 @@ const Header = () => {
               {/* Если авторизован - показываем профиль и кнопку выхода */}
               <li><Link to="/profile">{user?.username || 'Профиль'}</Link></li>
               <li>
-                <button onClick={handleLogout} className="logout-button">
-                  Выйти
+                <button onClick={handleLogout} className="button book-button">
+                  Забронировать
                 </button>
               </li>
             </>

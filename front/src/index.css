@@ -28,4 +28,31 @@
     flex-wrap: wrap; /* Перенос на маленьких экранах */
   }
 
+  .button {
+    background: none;
+    border: 0.5px solid #ffffff;
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    padding: 15px 30px;
+    margin: 0;
+    text-decoration: none;
+    border-radius: 0;
+  }
+  
+  .button:hover {
+    background: white;
+    color: black;
+  }
+  
+  .book-button {
+    background-color: #7a3faa;
+    border: none;
+  }
+  
+  .book-button:hover {
+    background: #642f8f;
+    color: white;
+  }
+
 

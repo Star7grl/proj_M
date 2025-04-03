@@ -4,13 +4,29 @@ import { useNavigate } from 'react-router-dom';
 import apiClient from '../config/apiClient';
 import '../styles/ForgotPassword.css';
 
+
 const ProfilePage = () => {
-  const { user, setUser } = useUserStore();
+  const { user, setUser, logout } = useUserStore();
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState(user?.firstName || '');
   const [lastName, setLastName] = useState(user?.lastName || '');
   const [isEditing, setIsEditing] = useState(false); // Состояние для режима редактирования
 
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      if (!useUserStore.getState().isAuth) {
+        navigate('/login'); // Перенаправляем на страницу входа
+      }
+    } catch (error) {
+      console.error('Ошибка при выходе:', error);
+      // Добавили уведомление пользователя об ошибке
+      alert('Не удалось выйти. Попробуйте ещё раз.');
+    }
+  };
+
+  
   useEffect(() => {
     if (user && user.role === 'ROLE_ADMIN') {
       navigate('/admin');
@@ -76,6 +92,10 @@ const ProfilePage = () => {
         <button onClick={handleEdit}>Редактировать</button>
       )}
       <p>Email: {user.email}</p>
+
+      <button onClick={handleLogout} className="logout-button">
+                  Выйти
+                </button>
     </div>
   );
 };
