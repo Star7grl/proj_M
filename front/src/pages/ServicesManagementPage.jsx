@@ -122,7 +122,8 @@ const ServicesManagementPage = () => {
                         onChange={handleInputChange}
                         placeholder="Цена"
                         className="admin-input"
-                        step="0.01"
+                        step="1"
+                        min="0"  
                         required
                     />
                     <button type="submit" className="button admin-button admin-button-primary">
@@ -151,7 +152,8 @@ const ServicesManagementPage = () => {
                             onChange={handleEditInputChange}
                             placeholder="Цена"
                             className="admin-input"
-                            step="0.01"
+                            step="1"
+                            min="0"  
                             required
                         />
                         <div className="admin-form-actions">
