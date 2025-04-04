@@ -1,69 +1,71 @@
-    package ru.flamexander.spring.security.jwt.service;
+package ru.flamexander.spring.security.jwt.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import ru.flamexander.spring.security.jwt.dtos.ServiceDto;
+import ru.flamexander.spring.security.jwt.entities.Services;
+import ru.flamexander.spring.security.jwt.repositories.ServiceRepository;
 
-    import lombok.RequiredArgsConstructor;
-    import org.springframework.stereotype.Service;
-    import ru.flamexander.spring.security.jwt.dtos.ServiceDto;
-    import ru.flamexander.spring.security.jwt.entities.Booking;
-    import ru.flamexander.spring.security.jwt.exceptions.ResourceNotFoundException;
-    import ru.flamexander.spring.security.jwt.entities.Services;
-    import ru.flamexander.spring.security.jwt.repositories.ServiceRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    import java.util.List;
-    import java.util.stream.Collectors;
+@Service
+public class ServiceService {
+    private final ServiceRepository serviceRepository;
 
-    @Service
-    @RequiredArgsConstructor
-    public class ServiceService {
-        private final ServiceRepository serviceRepository;
-
-        public List<ServiceDto> findAll() {
-            return serviceRepository.findAll().stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
-        }
-
-        public ServiceDto findById(Long id) {
-            Services service = serviceRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Услуга не найдена"));
-            return convertToDto(service);
-        }
-
-        public ServiceDto save(ServiceDto serviceDto) {
-            Services service = new Services(
-                    null, // ID будет сгенерирован автоматически
-                    serviceDto.getServiceName(),
-                    serviceDto.getServicePrice()
-            );
-            Services savedService = serviceRepository.save(service);
-            return convertToDto(savedService);
-        }
-
-        public ServiceDto updateService(ServiceDto serviceDto) {
-            Services existingService = serviceRepository.findById(serviceDto.getServiceId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Услуга не найдена"));
-            existingService.setServiceName(serviceDto.getServiceName());
-            existingService.setServicePrice(serviceDto.getServicePrice());
-            Services updatedService = serviceRepository.save(existingService);
-            return convertToDto(updatedService);
-        }
-
-        public void deleteById(Long id) {
-            serviceRepository.deleteById(id);
-        }
-
-        public List<ServiceDto> searchByName(String serviceName) {
-            return serviceRepository.findByServiceNameContainingIgnoreCase(serviceName)
-                    .stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
-        }
-
-        private ServiceDto convertToDto(Services service) {
-            ServiceDto dto = new ServiceDto();
-            dto.setServiceId(service.getServiceId());
-            dto.setServiceName(service.getServiceName());
-            dto.setServicePrice(service.getServicePrice());
-            return dto;
-        }
+    @Autowired
+    public ServiceService(ServiceRepository serviceRepository) {
+        this.serviceRepository = serviceRepository;
     }
+
+    public Page<ServiceDto> findAll(Pageable pageable) {
+        Page<Services> servicesPage = serviceRepository.findAll(pageable);
+        return servicesPage.map(this::convertToDto);
+    }
+
+    public List<ServiceDto> findAll() {
+        return serviceRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    public ServiceDto findById(Long id) {
+        Services service = serviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+        return convertToDto(service);
+    }
+
+    public ServiceDto save(ServiceDto serviceDto) {
+        Services service = new Services();
+        service.setServiceName(serviceDto.getServiceName());
+        service.setServicePrice(serviceDto.getServicePrice());
+        service = serviceRepository.save(service);
+        return convertToDto(service);
+    }
+
+    public ServiceDto updateService(ServiceDto serviceDto) {
+        Services service = serviceRepository.findById(serviceDto.getServiceId())
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+        service.setServiceName(serviceDto.getServiceName());
+        service.setServicePrice(serviceDto.getServicePrice());
+        service = serviceRepository.save(service);
+        return convertToDto(service);
+    }
+
+    public void deleteById(Long id) {
+        serviceRepository.deleteById(id);
+    }
+
+    public List<ServiceDto> searchByName(String name) {
+        return serviceRepository.findByServiceNameContainingIgnoreCase(name)
+                .stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    private ServiceDto convertToDto(Services service) {
+        ServiceDto dto = new ServiceDto();
+        dto.setServiceId(service.getServiceId());
+        dto.setServiceName(service.getServiceName());
+        dto.setServicePrice(service.getServicePrice());
+        return dto;
+    }
+}

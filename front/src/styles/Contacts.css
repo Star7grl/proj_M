@@ -100,21 +100,8 @@
     resize: vertical;
     min-height: 150px;
   }
-  
-  button[type="submit"] {
-    background: #790bb8;
-    color: white;
-    border: none;
-    padding: 15px 40px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  button[type="submit"]:hover {
-    box-shadow: 0px 8px 23px rgba(40, 106, 222, 0.32);
-  }
-  
+
+
   /* Responsive */
   @media (max-width: 768px) {
     .contact-content {

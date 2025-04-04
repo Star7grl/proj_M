@@ -1,16 +1,17 @@
 package ru.flamexander.spring.security.jwt.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.service.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.flamexander.spring.security.jwt.dtos.ServiceDto;
-import ru.flamexander.spring.security.jwt.entities.Booking;
-import ru.flamexander.spring.security.jwt.entities.Services;
-import ru.flamexander.spring.security.jwt.exceptions.ResourceNotFoundException;
 import ru.flamexander.spring.security.jwt.service.ServiceService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/services")
@@ -19,8 +20,16 @@ public class ServiceController {
     private final ServiceService serviceService;
 
     @GetMapping
-    public List<ServiceDto> findAll() {
-        return serviceService.findAll();
+    public ResponseEntity<Map<String, Object>> getServices(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ServiceDto> servicesPage = serviceService.findAll(pageable);
+        Map<String, Object> response = new HashMap<>();
+        response.put("services", servicesPage.getContent());
+        response.put("total", servicesPage.getTotalElements());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -28,7 +37,7 @@ public class ServiceController {
         return serviceService.findById(id);
     }
 
-    @PostMapping("/add")
+    @PostMapping // Изменено: убрано "/add"
     public ServiceDto save(@RequestBody ServiceDto serviceDto) {
         return serviceService.save(serviceDto);
     }

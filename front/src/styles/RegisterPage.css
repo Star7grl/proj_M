@@ -55,13 +55,13 @@
 }
 
 .form-input:focus {
-  border-bottom-color: #7a3faa;
+  border-bottom-color: #763ba7db;
 }
 
 .register-button {
   width: 100%;
   padding: 15px;
-  background-color: #7a3faa;
+  background-color: #763ba7db;
   color: white;
   cursor: pointer;
   font-size: 16px;

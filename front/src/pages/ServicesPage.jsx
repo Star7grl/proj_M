@@ -10,7 +10,7 @@ const ServicesPage = () => {
         const fetchServices = async () => {
             try {
                 const data = await ServicesApi.getAllServices();
-                setServices(data);
+                setServices(data.services || []);
             } catch (error) {
                 console.error("Ошибка загрузки услуг:", error);
             } finally {

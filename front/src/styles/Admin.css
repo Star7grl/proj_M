@@ -1,14 +1,190 @@
 /* Стили для страницы админа */
-.admin-panel-page {
+.admin-panel-page, .services-management {
     margin-top: 120px; /* Отступ равен высоте шапки */
     padding: 20px; /* Дополнительный внутренний отступ для удобства */
 }
 
-/* Стили для страницы управления сервисами */
-.services-management-page {
-    margin-top: 200px; /* Отступ равен высоте шапки */
-    padding: 160px; /* Дополнительный внутренний отступ для удобства */
-}
-.thStyle{
-color: #000;
-  };
+  
+ /* Admin.css */
+.services-management {
+    padding-top: 180px; 
+    max-width: 55%;
+    margin: 0 auto;
+    padding-bottom: 40px;
+    color: #000000;
+  }
+  
+  .admin-section-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #000000;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  .admin-subsection-title {
+    font-size: 20px;
+    margin: 10px 0 20px;
+    color: #000000;
+    /* border-bottom: 1px solid #c9c9c9; */
+    /* padding-bottom: 0px; */
+  }
+  
+  /* Формы */
+  .admin-form-container {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 50px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  .admin-edit-form {
+    background: #f8f9fa;
+    border-left: 4px solid #763ba7db;
+  }
+  
+  .admin-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+  }
+  
+  .admin-input {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+    flex: 1;
+    min-width: 200px;
+    transition: border-color 0.9s;
+  }
+  
+  .admin-input:focus {
+    border-color: #763ba7db;
+    outline: none; /*Ббордер по дефолту синий*/
+  }
+  
+
+  /* Кнопки */
+  .admin-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+    background: #763ba7db;
+  }
+  
+  .admin-button-save {
+    background-color: #14994be9;
+    color: white;
+  }
+  
+  .admin-button-save:hover {
+    background-color: #168143;
+  }
+  
+  .admin-button-cancel {
+    border: 1px solid #14994be9;
+    color: white;
+    background: #ffffff;
+    color: #14994be9;
+  }
+  
+  .admin-button-cancel:hover {
+  transform: scale(1.05);
+  }
+  
+
+
+  
+  .admin-button-edit {
+    border: 1px solid #763ba7db;
+    background-color: #ffffff;
+    color: #642f8f;
+  }
+  
+  .admin-button-edit:hover {
+    background-color: #763ba7db;
+    color: #ffffff;
+    transition: all 0.3s ease;
+  }
+  
+  .admin-button-delete {
+    background-color: #e74c3c;
+    color: white;
+    margin-left: 10px;
+  }
+  
+  .admin-button-delete:hover {
+    background-color: #a93326;
+  }
+  
+  .admin-form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  /* Таблица */
+  .admin-table-container {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    overflow-x: auto;
+  }
+  
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .admin-table th {
+    background-color: #763ba7db;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+  }
+  
+  .admin-table td {
+    padding: 20px 25px;
+    border-bottom: 1px solid #ecf0f1;
+  }
+  
+  .admin-table tr:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .admin-actions {
+    white-space: nowrap;
+  }
+  
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .admin-form {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .admin-input {
+      width: 100%;
+      min-width: auto;
+    }
+    
+    .admin-table th, 
+    .admin-table td {
+      padding: 8px 10px;
+      font-size: 14px;
+    }
+    
+    .admin-button {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+  }
