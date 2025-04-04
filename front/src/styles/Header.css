@@ -31,26 +31,66 @@ box-sizing: border-box;
   display: flex;
 }
   
-.header nav ul li {
+.header ul li {
   display: inline-block;
 }
   
-.header nav a {
+.header a {
   color: white;
   text-decoration: none;
 }
   
-.header nav a:hover {
+.header a:hover {
   color: #ccc;
 }
 
 .auth-nav ul{
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 20px;
   margin: 0;
 }
 
 .main-nav ul{
   gap: 40px;
+}
+
+/* Добавьте эти стили в Header.css */
+
+.profile-icon-container {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.profile-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.profile-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.profile-icon:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.profile-svg {
+  width: 24px;
+  height: 24px;
+  transition: all 0.3s ease;
 }
 

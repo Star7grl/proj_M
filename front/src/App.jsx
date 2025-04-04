@@ -6,7 +6,8 @@ import ServicesPage from './pages/ServicesPage';
 import RoomsPage from './pages/RoomsPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPanelPage from './pages/AdminPanelPage';
-import ServicesManagementPage from './pages/ServicesManagementPage'; // Новый импорт
+import ServicesManagementPage from './pages/ServicesManagementPage';
+import RoomsManagementPage from './pages/RoomsManagementPage';  // Новый импорт
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ContactsPage from './pages/ContactsPage';
 import Header from './components/Header';
@@ -27,6 +28,7 @@ const App = () => {
                 <Route path="/contacts" element={<ContactsPage />} />
                 <Route path="/admin" element={<ProtectedRoute><AdminPanelPage /></ProtectedRoute>} />
                 <Route path="/admin/services" element={<ProtectedRoute><ServicesManagementPage /></ProtectedRoute>} />
+                <Route path="/admin/rooms" element={<ProtectedRoute><RoomsManagementPage /></ProtectedRoute>} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>

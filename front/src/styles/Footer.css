@@ -36,12 +36,12 @@
   
   .social-icon {
     font-size: 24px;
-    color: white;
+    color: rgb(255, 255, 255);
     transition: all 0.3s ease;
   }
   
   .social-icon:hover {
-    color: #7a3faa;
+    color: #d4d4d4;
     transform: translateY(-3px);
   }
   
@@ -60,4 +60,3 @@
     color: #7a3faa;
   }
 
-  

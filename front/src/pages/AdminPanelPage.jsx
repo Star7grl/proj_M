@@ -10,6 +10,9 @@ const AdminPanelPage = () => {
             <Link to="/admin/services">
                 <button>Управление сервисами</button>
             </Link>
+            <Link to="/admin/rooms">
+                <button>Управление комнатами</button>
+            </Link>
         </div>
     );
 };
