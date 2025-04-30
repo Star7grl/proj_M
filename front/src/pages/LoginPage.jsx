@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import useUserStore from '../store/UserStore'; // Импортируем наше хранилище
+import useUserStore from '../store/UserStore'; 
 import '../styles/LoginPage.css';
 import bg from '../assets/images/номера.png'; 
 
@@ -64,7 +64,7 @@ const LoginPage = () => {
           autoComplete="current-password"
         />
         
-        <button type="submit">
+        <button type="submit" className="button reg-button">
           Войти
         </button>
         

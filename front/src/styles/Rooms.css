@@ -1,131 +1,220 @@
+/* Стили для RoomsPage */
+.rooms-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  margin-top: -60px;
+}
+
+.rooms-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.rooms-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+.rooms-page {
+  max-width: 80%;
+  margin: 60px auto 60px;
+  padding: 3rem;
+  font-family: 'Montserrat', sans-serif;
+  color: #333;
+  animation: fadeIn 0.8s ease-in-out;
+  background-color: #f5f5f5; /* Серый фон для всей страницы */
+  color: #333;
+  animation: fadeIn 0.8s ease-in-out;
+  background-color: rgba(245, 245, 245, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.rooms-page h1 {
+  color: rgb(0, 0, 0);
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+
+/* Убираем подчеркивание у заголовков */
+h2, h3 {
+  text-decoration: none;
+  margin: 10px 0;
+}
+
+ h2 {
+  font-weight: 600;
+  font-size: 30px;
+  margin-bottom: 30px;
+}
+
+h3 {
+  font-weight: 700;
+  font-size: 20px;
+  margin-top: 30px;
+}
+
+.search-input {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 3rem;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.9);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239b59b6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 95% center;
+  background-size: 20px;
+}
+
+.search-input:focus {
+  outline: none;
+  transform: translateY(-2px);
+}
+
+/* Новый стиль для контейнера карточек */
+.cards-container {
+  max-width: 1800px; /* Такая же ширина как у шапки */
+  margin: 0 auto;
+  padding: 0 4rem;
+ 
+}
+
 .cards_stay {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-top: 80px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 карточки в ряд */
+  gap: 3rem;
+  width: 100%;
+  border-radius: 40px;
+}
+
+.card_stay {
+  background-color: white; /* Белый фон для карточки */
+  display: flex;
+  height: 500px;
+  margin-bottom: 0; /* Убираем нижний отступ, так как есть gap у grid */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease;
+  border-radius: 20px;
+}
+
+.card_stay:hover {
+  transform: translateY(-5px);
+}
+
+.card_stay img {
+  width: 45%;
+  height: 100%; /* Занимает всю высоту карточки */
+  object-fit: cover;
+  border-radius: 20px 0 0 20px;
+}
+
+.about_text {
+  width: 55%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .card_stay {
+    height: 450px;
+  }
+  
+  .about_text {
+    padding: 40px;
+  }
+}
+
+@media (max-width: 992px) {
+  .cards_stay {
+    grid-template-columns: 1fr; /* 1 карточка в ряд на меньших экранах */
   }
   
   .card_stay {
-    margin-top: 40px;
-    display: flex;
-    max-width: 1140px;
-    height: 500px;
+    height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .card_stay {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .card_stay img {
+    width: 100%;
+    height: 300px;
+  }
+
+  .about_text {
+    width: 100%;
+    padding: 30px;
+  }
+
+  .about_text h2 {
+    font-size: 32px;
+  }
+
+  .about_text h3 {
+    font-size: 22px;
+  }
+
+  .about_text button {
+    padding: 15px 10px;
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rooms-page {
+    padding: 1rem;
+  }
+  
+  .cards-container {
+    padding: 0 1rem;
+  }
+  
+  .about_text {
+    padding: 20px;
+  }
+  
+  .about_text h2 {
+    font-size: 28px;
     margin-bottom: 20px;
   }
   
   .card_stay img {
-    width: 45%;
-    height: auto;
-    object-fit: cover;
+    height: 250px;
   }
-  
-  .about_text {
-    width: 55%;
-    background-color: #EAEAEA;
-    padding: 60px;
-    display: flex;
-    flex-direction: column; 
-    justify-content: center; 
-  }
-  
-  .about_text h2, .about_text h3, .about_text p {
-    margin: 10px 0;
-  }
-  
-  .about_text h2 {
-    font-weight: 600;
-    font-size: 40px;
-    margin-bottom: 30px;
-  }
-  
-  .about_text h3 {
-    font-weight: 700;
-    font-size: 25px;
-  }
-  
-  .about_text button {
-    background-color: #790BB8; 
-    color: white;
-    padding: 20px 10px;
-    border: none;
-    cursor: pointer;
-    margin-top: 30px;
-    font-size: 19px;
-  }
-  
-  .about_text button a {
-    color: white;
-    text-decoration: none;
-  }
-  
-  footer {
-    margin-top: 80px;
-  }
-  
-  /* Адаптивность для 768px */
-  @media (max-width: 768px) {
-    .card_stay {
-        flex-direction: column;
-        height: auto;
-        max-width: 100%;
-    }
-  
-    .card_stay img {
-        width: 100%;
-        height: auto;
-    }
-  
-    .about_text {
-        width: 100%;
-        padding: 30px;
-    }
-  
-    .about_text h2 {
-        font-size: 32px;
-    }
-  
-    .about_text h3 {
-        font-size: 22px;
-    }
-  
-    .about_text button {
-        padding: 15px 10px;
-        font-size: 17px;
-    }
-  
-    .reverse_sh {
-        flex-direction: column-reverse;
-    }
-  }
-  
-  /* Адаптивность для 320px */
-  @media (max-width: 320px) {
-    .cards_stay {
-        margin-top: 40px;
-    }
-  
-    .card_stay {
-        margin-top: 20px;
-        border: 15px solid #EAEAEA;
-    }
-  
-    .about_text {
-        padding: 20px;
-    }
-  
-    .about_text h2 {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-  
-    .about_text h3 {
-        font-size: 18px;
-    }
-  
-    .about_text button {
-        padding: 15px 10px;
-        margin-top: 20px;
-        font-size: 16px;
-    }
-  }
-  
+}
+

@@ -1,24 +1,25 @@
 package ru.flamexander.spring.security.jwt.entities;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "rooms")
 @Getter
 @Setter
-@NoArgsConstructor // Пустой конструктор
-@AllArgsConstructor // Конструктор со всеми параметрами
+@NoArgsConstructor
+@AllArgsConstructor
 @SequenceGenerator(name = "default_generator", sequenceName = "rooms_sequence", allocationSize = 1)
 public class Room {
 
-    @Id // Указываем, что это поле является идентификатором
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "default_generator") // Генерация значения через последовательность
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "default_generator")
     @Column(name = "room_id")
     private Long roomId;
 
@@ -36,4 +37,13 @@ public class Room {
 
     @Column(name = "status")
     private String status;
+
+    // Изменено: добавлена аннотация columnDefinition = "TEXT" для поддержки длинных URL
+    // @Column(name = "image_url", columnDefinition = "TEXT")
+    // private String imageUrl;
+    // Мой комментарий: Поле imageUrl удалено, так как теперь изображения хранятся в отдельной сущности RoomImage.
+
+    // Мой комментарий: Добавлена связь OneToMany с RoomImage для поддержки нескольких изображений.
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoomImage> images = new ArrayList<>();
 }

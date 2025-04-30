@@ -7,7 +7,7 @@ import ServicesApi from "../config/servicesApi";
 const ServicesManagementPage = () => {
     const [services, setServices] = useState([]); // Начальное значение — пустой массив
     const [loading, setLoading] = useState(true);
-    const [formData, setFormData] = useState({ serviceName: "", servicePrice: "" });
+    const [formData, setFormData] = useState({ serviceName: "", servicePrice: "", imageUrl: "" });
     const [editingService, setEditingService] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
@@ -19,18 +19,17 @@ const ServicesManagementPage = () => {
             try {
                 setLoading(true);
                 setError(null);
+
                 const response = await ServicesApi.getAllServices(currentPage, itemsPerPage);
-                
                 console.log("Ответ от сервера:", response); // Для отладки
-                
                 // Проверяем, что получили объект с массивом services
                 if (!response || !Array.isArray(response.services)) {
                     throw new Error("Сервер вернул неверный формат данных");
                 }
-                
+
                 setServices(response.services);
                 setTotalItems(response.total || response.services.length);
-                
+
             } catch (error) {
                 console.error("Ошибка загрузки услуг:", error);
                 setError("Не удалось загрузить список услуг");
@@ -41,6 +40,7 @@ const ServicesManagementPage = () => {
         };
         fetchServices();
     }, [currentPage, itemsPerPage]);
+
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -68,9 +68,10 @@ const ServicesManagementPage = () => {
             const newService = await ServicesApi.createService({
                 serviceName: formData.serviceName,
                 servicePrice: parseFloat(formData.servicePrice),
+                imageUrl: formData.imageUrl
             });
             setServices([...services, newService]);
-            setFormData({ serviceName: "", servicePrice: "" });
+            setFormData({ serviceName: "", servicePrice: "", imageUrl: "" });
             setTotalItems(totalItems + 1);
         } catch (error) {
             console.error("Ошибка создания услуги:", error);
@@ -88,6 +89,7 @@ const ServicesManagementPage = () => {
             const updatedService = await ServicesApi.updateService(editingService.serviceId, {
                 serviceName: editingService.serviceName,
                 servicePrice: parseFloat(editingService.servicePrice),
+                imageUrl: editingService.imageUrl
             });
             setServices(services.map((s) => (s.serviceId === updatedService.serviceId ? updatedService : s)));
             setEditingService(null);
@@ -98,8 +100,8 @@ const ServicesManagementPage = () => {
 
     if (loading) return <div>Загрузка...</div>;
 
-    return (
 
+    return (
         <div className="services-management">
             <h2 className="admin-section-title">Управление услугами</h2>
 
@@ -123,7 +125,16 @@ const ServicesManagementPage = () => {
                         placeholder="Цена"
                         className="admin-input"
                         step="1"
-                        min="0"  
+                        min="0"
+                        required
+                    />
+                    <input
+                        type="text"
+                        name="imageUrl"
+                        value={formData.imageUrl}
+                        onChange={handleInputChange}
+                        placeholder="URL изображения"
+                        className="admin-input"
                         required
                     />
                     <button type="submit" className="button admin-button admin-button-primary">
@@ -153,7 +164,16 @@ const ServicesManagementPage = () => {
                             placeholder="Цена"
                             className="admin-input"
                             step="1"
-                            min="0"  
+                            min="0"
+                            required
+                        />
+                        <input
+                            type="text"
+                            name="imageUrl"
+                            value={editingService.imageUrl}
+                            onChange={handleEditInputChange}
+                            placeholder="URL изображения"
+                            className="admin-input"
                             required
                         />
                         <div className="admin-form-actions">
@@ -176,36 +196,38 @@ const ServicesManagementPage = () => {
                 <h3 className="admin-subsection-title">Список услуг</h3>
                 <table className="admin-table">
                     <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Название</th>
-                            <th>Цена</th>
-                            <th>Действия</th>
-                        </tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Цена</th>
+                        <th>Изображение</th>
+                        <th>Действия</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {services &&
-                            services.map((service) => (
-                                <tr key={service.serviceId}>
-                                    <td>{service.serviceId}</td>
-                                    <td>{service.serviceName}</td>
-                                    <td>{service.servicePrice.toFixed(2)} ₽</td>
-                                    <td className="admin-actions">
-                                        <button
-                                            onClick={() => setEditingService(service)}
-                                            className="admin-button admin-button-edit"
-                                        >
-                                            Редактировать
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(service.serviceId)}
-                                            className="admin-button admin-button-delete"
-                                        >
-                                            Удалить
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                    {services &&
+                        services.map((service) => (
+                            <tr key={service.serviceId}>
+                                <td>{service.serviceId}</td>
+                                <td>{service.serviceName}</td>
+                                <td>{service.servicePrice.toFixed(2)} ₽</td>
+                                <td>{service.imageUrl}</td>
+                                <td className="admin-actions">
+                                    <button
+                                        onClick={() => setEditingService(service)}
+                                        className="admin-button admin-button-edit"
+                                    >
+                                        Редактировать
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(service.serviceId)}
+                                        className="admin-button admin-button-delete"
+                                    >
+                                        Удалить
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
                 <Pagination

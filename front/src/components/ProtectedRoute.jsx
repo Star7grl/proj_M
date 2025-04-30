@@ -1,10 +1,10 @@
 // src/components/ProtectedRoute.js
-// Для защиты маршрутов от неавторизованных пользователей.
 import { Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import apiClient from '../config/apiClient';
 
-const ProtectedRoute = ({ children }) => {
+// Компонент для защиты маршрутов с проверкой роли
+const ProtectedRoute = ({ children, role }) => {
   const [isValid, setIsValid] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
@@ -12,10 +12,17 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Запрос к защищенному эндпоинту (сервер проверит куки автоматически)
+        // Проверка аутентификации
         await apiClient.get('/api/auth/check', { withCredentials: true });
 
-        // Если запрос прошел успешно (статус 200), пользователь авторизован
+        if (role) {
+          // Получение информации о пользователе для проверки роли
+          const response = await apiClient.get('/api/auth/me');
+          const userRole = response.data.role.replace("ROLE_", ""); // Убираем префикс "ROLE_"
+          if (userRole !== role) {
+            throw new Error("Недостаточно прав");
+          }
+        }
         setIsValid(true);
       } catch (error) {
         console.error('Ошибка проверки авторизации:', error);
@@ -26,15 +33,14 @@ const ProtectedRoute = ({ children }) => {
     };
 
     checkAuth();
-  }, []);
+  }, [role]);
 
   if (isLoading) {
     return <div>Проверка авторизации...</div>;
   }
 
   if (!isValid) {
-     // Через state={{ from: location }} можно вернуть пользователя на страницу, которую он пытался открыть до входа
-     return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return children;

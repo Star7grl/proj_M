@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.FieldError; // Новый импорт
 import ru.flamexander.spring.security.jwt.configs.CustomUserDetails;
 import ru.flamexander.spring.security.jwt.dtos.JwtRequest;
 import ru.flamexander.spring.security.jwt.dtos.JwtResponse;
@@ -21,7 +22,6 @@ import ru.flamexander.spring.security.jwt.dtos.RegistrationUserDto;
 import ru.flamexander.spring.security.jwt.dtos.UserDto;
 import ru.flamexander.spring.security.jwt.entities.User;
 import ru.flamexander.spring.security.jwt.service.RegAuto.AuthService;
-import org.springframework.validation.FieldError;
 import ru.flamexander.spring.security.jwt.utils.JwtTokenUtils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
 public class AuthController {
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;
@@ -45,6 +45,7 @@ public class AuthController {
         this.jwtTokenUtils = jwtTokenUtils;
     }
 
+    // Регистрация нового пользователя
     @PostMapping("/reg")
     public ResponseEntity<?> createNewUser(@Valid @RequestBody RegistrationUserDto registrationUserDto, BindingResult bindingResult) {
         log.info("Пришел запрос на регистрацию");
@@ -62,6 +63,7 @@ public class AuthController {
         return authService.createNewUser(registrationUserDto);
     }
 
+    // Проверка аутентификации
     @GetMapping("/check")
     public ResponseEntity<?> checkAuth() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -71,37 +73,32 @@ public class AuthController {
         return ResponseEntity.status(401).build();
     }
 
+    // Вход пользователя
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody JwtRequest authRequest, HttpServletResponse response) {
         log.info("Пришел запрос на вход");
 
         try {
-            // Аутентификация пользователя
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
             log.info("Аутентификация прошла успешно");
 
-            // Установка аутентификации в SecurityContext
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Генерация JWT токена
             String jwt = jwtTokenUtils.generateToken((UserDetails) authentication.getPrincipal());
             log.info("Токен сгенерирован успешно");
 
-            // Создание безопасной cookie с использованием ResponseCookie
             ResponseCookie cookie = ResponseCookie.from("JWT", jwt)
-                    .httpOnly(true)      // Защита от XSS атак (недоступно через JavaScript)
-                    .secure(true)        // Отправка только по HTTPS (обязательно для SameSite=None)
-                    .path("/")          // Доступно для всех путей на домене
-                    .maxAge(3600)        // Время жизни 1 час (в секундах)
-                    .sameSite("None")    // Разрешаем кросс-сайтовые запросы (требуется для фронтенда на другом порту)
-                    .build();            // Финальная сборка cookie
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(3600)
+                    .sameSite("None")
+                    .build();
 
-            // Добавление cookie в заголовок ответа
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             log.info("Secure cookie с токеном добавлен в заголовки ответа");
 
-            // Возвращаем токен в JSON-формате
             return ResponseEntity.ok()
                     .header("Content-Type", "application/json")
                     .body(new JwtResponse(jwt));
@@ -112,6 +109,7 @@ public class AuthController {
         }
     }
 
+    // Выход пользователя
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from("JWT", "")
@@ -126,23 +124,22 @@ public class AuthController {
         return ResponseEntity.ok("Выход выполнен успешно");
     }
 
+    // Получение информации о текущем пользователе (занят для профиля)
     @GetMapping("/me")
     public ResponseEntity<UserDto> getCurrentUser() {
-        // Получаем объект аутентификации из контекста безопасности
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        // Проверяем, что пользователь аутентифицирован и это не анонимный доступ
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
             CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
             User user = userDetails.getUser();
-            // Новое: добавляем роль в UserDto
-            UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getEmail(), user.getRole().getName());
+            // Новое: добавляем роль в UserDto и photoPath
+            UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getEmail(), user.getRole().getName(), user.getFirstName(), user.getLastName(), user.getPhotoPath());
             return ResponseEntity.ok(userDto);
         }
         // Если пользователь не аутентифицирован, возвращаем 401 Unauthorized
         return ResponseEntity.status(401).build();
     }
-}
 
+}
 
 
 

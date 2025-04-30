@@ -1,59 +1,32 @@
-// очень круто, когда папка апи исключительно для запросов 
+import authApi from "../config/AuthApi.js";
+import apiClient from "../config/apiClient.js";
 
-//без базовой настройки писали бы:
-// ictient } from " . . / config/apiclient";
-// § from "axios";
-
-// const response = await axios.post ('http: //localhost:8080/user /create , data,withcredentials:true});
-
-
-import apiClient from "../config/apiClient";
-
-export default class UserAPI {
+export default class UserApi {
   static async registerUser(data) {
-    try {
-      const response = await apiClient.post('/api/auth/reg', data, {
-        withCredentials: true // Добавляем для поддержки кук
-      });
-      return response.data; // Теперь методы возвращают только данные из ответа, а не весь response
-    } catch (error) {
-      // Улучшенная обработка ошибок
-      throw new Error(
-        error.response?.data?.message || 
-        error.message || 
-        'Ошибка регистрации'
-      );
-    }
+    return authApi.post("/api/auth/reg", data);
   }
 
   static async login(data) {
+    return authApi.post("/api/auth/login", data);
+  }
+
+  static async logout() {
+    return authApi.post("/api/auth/logout", {});
+  }
+
+  static async uploadPhoto(userId, formData) {
     try {
-      const response = await apiClient.post('/api/auth/login', data, {
-        withCredentials: true // Ключевое изменение для работы с куками
+      // Используем напрямую apiClient вместо authApi для формы с файлом
+      const response = await apiClient.post(`/api/users/${userId}/uploadPhoto`, formData, {
+        headers: { 
+          "Content-Type": "multipart/form-data" 
+        },
+        withCredentials: true
       });
       return response.data;
     } catch (error) {
-      throw new Error(
-        error.response?.data?.message || 
-        error.message || 
-        'Ошибка входа'
-      );
-    }
-  }
-
-  
-  static async logout() {
-    try {
-      await apiClient.post('/api/auth/logout', {}, {
-        withCredentials: true
-      });
-    } catch (error) {
-      throw new Error(
-        error.response?.data?.message || 
-        error.message || 
-        'Ошибка выхода'
-      );
+      console.error("Детали ошибки:", error.response || error);
+      throw error;
     }
   }
 }
-

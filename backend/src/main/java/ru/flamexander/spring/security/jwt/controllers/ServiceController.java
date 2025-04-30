@@ -37,7 +37,7 @@ public class ServiceController {
         return serviceService.findById(id);
     }
 
-    @PostMapping // Изменено: убрано "/add"
+    @PostMapping
     public ServiceDto save(@RequestBody ServiceDto serviceDto) {
         return serviceService.save(serviceDto);
     }

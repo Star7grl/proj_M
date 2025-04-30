@@ -11,11 +11,12 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendResetCode(String toEmail, String code) {
+    public void sendResetLink(String toEmail, String token) {
+        String resetLink = "http://localhost:5174/reset-password?token=" + token;
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
-        message.setSubject("Код для восстановления пароля");
-        message.setText("Ваш код для восстановления пароля: " + code);
+        message.setSubject("Сброс пароля");
+        message.setText("Перейдите по ссылке для сброса пароля: " + resetLink + "\nСсылка действительна 10 минут.");
         mailSender.send(message);
     }
 }

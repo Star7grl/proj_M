@@ -1,55 +1,74 @@
 package ru.flamexander.spring.security.jwt.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.flamexander.spring.security.jwt.dtos.RoomDto;
 import ru.flamexander.spring.security.jwt.entities.Room;
+import ru.flamexander.spring.security.jwt.repositories.RoomRepository;
 import ru.flamexander.spring.security.jwt.service.RoomService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@RestController // Аннотация, обозначающая, что это REST контроллер
+@RestController
 @RequestMapping("/api/rooms")
+@CrossOrigin(origins = "http://localhost:5174")
 public class RoomController {
 
     private final RoomService roomService;
 
-    @Autowired // Автоматическое внедрение зависимости
+    @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
     public RoomController(RoomService roomService) {
         this.roomService = roomService;
     }
 
-    @GetMapping // Обработчик GET-запроса для получения всех номеров
-    public ResponseEntity<List<Room>> getAllRooms() {
-        List<Room> rooms = roomService.getAllRooms();
-        return ResponseEntity.ok(rooms); // Возвращает список номеров с кодом 200 OK
+    @GetMapping
+    public ResponseEntity<Page<Room>> getAllRooms(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "9") int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Room> rooms = roomService.getAllRooms(pageable);
+        return ResponseEntity.ok(rooms);
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<Page<Room>> getAllRoomsAdmin(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Room> rooms = roomService.getAllRooms(pageable);
+        return ResponseEntity.ok(rooms);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Room> getRoomById(@PathVariable Long id) { // @PathVariable извлекает ID из пути
+    public ResponseEntity<Room> getRoomById(@PathVariable Long id) {
         Optional<Room> room = roomService.getRoomById(id);
-        return room.map(ResponseEntity::ok) // Если номер найден, возвращает его с кодом 200 OK
-                .orElse(ResponseEntity.notFound().build()); // Иначе возвращает код 404 Not Found
+        return room.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    //localhost:8080/api/rooms/add
     @PostMapping("/add")
     public ResponseEntity<Room> createRoom(@RequestBody RoomDto roomDto) {
         Room createdRoom = roomService.createRoom(roomDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdRoom); // Возвращает созданный номер с кодом 201 Created
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdRoom);
     }
-
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Room> updateRoom(@PathVariable Long id, @RequestBody RoomDto roomDto) {
         try {
             Room updatedRoom = roomService.updateRoom(id, roomDto);
-            return ResponseEntity.ok(updatedRoom); // Возвращает обновленный номер с кодом 200 OK
-        } catch (RuntimeException ex) { // Обработка исключения, если номер не найден
-            return ResponseEntity.notFound().build(); // Возвращает код 404 Not Found
+            return ResponseEntity.ok(updatedRoom);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -62,8 +81,6 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-
-    //http://localhost:8080/api/rooms/searchTitle?title=Люкс
     @GetMapping("/searchTitle")
     public ResponseEntity<List<Room>> searchRooms(@RequestParam(required = false) String title) {
         if (title != null && !title.isEmpty()) {
@@ -72,17 +89,21 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getAllRooms());
     }
 
-    //http://localhost:8080/api/rooms/sear?maxPrice=10000
-    //http://localhost:8080/api/rooms/searchPrice?minPrice=9000&maxPrice=20000
-    //http://localhost:8080/api/rooms/searchPrice?roomTitle=Стандарт&minPrice=5000&maxPrice=20000
     @GetMapping("/searchPrice")
     public ResponseEntity<List<Room>> searchRooms(
             @RequestParam(required = false) String roomTitle,
             @RequestParam(required = false, defaultValue = "0") double minPrice,
-            @RequestParam(required = false, defaultValue = "100000") double maxPrice // Очень большая цена, по умолчанию возвращает все
-    ) {
+            @RequestParam(required = false, defaultValue = "100000") double maxPrice) {
         return ResponseEntity.ok(roomService.searchRooms(roomTitle, minPrice, maxPrice));
     }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<Room>> getAvailableRooms(
+            @RequestParam String checkInDate,
+            @RequestParam String checkOutDate) {
+        LocalDate checkIn = LocalDate.parse(checkInDate);
+        LocalDate checkOut = LocalDate.parse(checkOutDate);
+        List<Room> availableRooms = roomService.getAvailableRooms(checkIn, checkOut);
+        return ResponseEntity.ok(availableRooms);
+    }
 }
-
-

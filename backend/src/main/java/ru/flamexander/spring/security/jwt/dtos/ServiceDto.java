@@ -13,4 +13,5 @@ public class ServiceDto {
     private Long serviceId;
     private String serviceName;
     private Double servicePrice;// Можно использовать Enum для статусов
+    private String imageUrl;
 }

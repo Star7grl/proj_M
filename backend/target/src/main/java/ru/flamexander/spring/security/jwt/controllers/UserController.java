@@ -11,7 +11,7 @@ import ru.flamexander.spring.security.jwt.dtos.UserDto;
 import ru.flamexander.spring.security.jwt.entities.User;
 import ru.flamexander.spring.security.jwt.service.UserService;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5174")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

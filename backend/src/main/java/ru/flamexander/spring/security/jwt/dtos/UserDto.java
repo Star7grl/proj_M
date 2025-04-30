@@ -5,17 +5,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor // Добавьте эту аннотацию
+@NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
     private Long id;
     private String username;
     private String email;
     private String role;
-    private String firstName; // Добавлено
-    private String lastName; // Добавлено
+    private String firstName;
+    private String lastName;
+    private String photoPath; // Добавляем поле photoPath
 
-    // Конструктор с тремя параметрами для обратной совместимости
     public UserDto(Long id, String username, String email) {
         this.id = id;
         this.username = username;
@@ -23,6 +23,7 @@ public class UserDto {
         this.role = null;
         this.firstName = null;
         this.lastName = null;
+        this.photoPath = null;
     }
 
     public UserDto(Long id, String username, String email, String role) {
@@ -32,5 +33,7 @@ public class UserDto {
         this.role = role;
         this.firstName = null;
         this.lastName = null;
+        this.photoPath = null;
     }
+
 }

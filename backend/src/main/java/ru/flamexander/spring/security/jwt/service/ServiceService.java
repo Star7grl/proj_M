@@ -39,6 +39,7 @@ public class ServiceService {
         Services service = new Services();
         service.setServiceName(serviceDto.getServiceName());
         service.setServicePrice(serviceDto.getServicePrice());
+        service.setImageUrl(serviceDto.getImageUrl()); // Сохраняем URL картинки
         service = serviceRepository.save(service);
         return convertToDto(service);
     }
@@ -48,6 +49,7 @@ public class ServiceService {
                 .orElseThrow(() -> new RuntimeException("Service not found"));
         service.setServiceName(serviceDto.getServiceName());
         service.setServicePrice(serviceDto.getServicePrice());
+        service.setImageUrl(serviceDto.getImageUrl()); // Обновляем URL картинки
         service = serviceRepository.save(service);
         return convertToDto(service);
     }
@@ -66,6 +68,7 @@ public class ServiceService {
         dto.setServiceId(service.getServiceId());
         dto.setServiceName(service.getServiceName());
         dto.setServicePrice(service.getServicePrice());
+        dto.setImageUrl(service.getImageUrl()); // Добавляем URL картинки в DTO
         return dto;
     }
 }

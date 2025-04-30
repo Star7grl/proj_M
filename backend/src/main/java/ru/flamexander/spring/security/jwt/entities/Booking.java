@@ -34,4 +34,7 @@ public class Booking {
 
     @Column(name = "total_sum")
     private BigDecimal totalSum;
+
+    @Column(name = "status")
+    private String status; // Новое поле для статуса
 }

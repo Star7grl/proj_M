@@ -1,32 +1,41 @@
 package ru.flamexander.spring.security.jwt.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ru.flamexander.spring.security.jwt.configs.CustomUserDetails;
 import ru.flamexander.spring.security.jwt.dtos.RegistrationUserDto;
 import ru.flamexander.spring.security.jwt.entities.Role;
 import ru.flamexander.spring.security.jwt.entities.User;
+import ru.flamexander.spring.security.jwt.repositories.BookingRepository;
 import ru.flamexander.spring.security.jwt.repositories.UserRepository;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
-import java.util.Random;
+import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class UserService implements UserDetailsService {
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService; // Добавляем EmailService
+    private final EmailService emailService;
+    private final BookingRepository bookingRepository;
 
     @Value("${admin.username}")
     private String adminUsername;
@@ -40,12 +49,16 @@ public class UserService implements UserDetailsService {
     @Value("${admin.role}")
     private String adminRole;
 
+    @Value("${upload.path}")
+    private String uploadPath;
+
     @Autowired
-    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder, EmailService emailService, BookingRepository bookingRepository) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.bookingRepository = bookingRepository;
     }
 
     @PostConstruct
@@ -54,7 +67,7 @@ public class UserService implements UserDetailsService {
             User admin = new User();
             admin.setUsername(adminUsername);
             admin.setEmail(adminEmail);
-            admin.setPassword(adminPassword); // Пароль уже захеширован в properties
+            admin.setPassword(adminPassword);
 
             Role adminRoleEntity = roleService.findByName(adminRole)
                     .orElseThrow(() -> new RuntimeException("Роль администратора не найдена"));
@@ -73,6 +86,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id);
     }
 
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -82,6 +99,7 @@ public class UserService implements UserDetailsService {
         return new CustomUserDetails(user);
     }
 
+    @Transactional
     public User createNewUser(RegistrationUserDto registrationUserDto) {
         User user = new User();
         user.setUsername(registrationUserDto.getUsername());
@@ -95,6 +113,9 @@ public class UserService implements UserDetailsService {
     }
 
     public boolean deleteById(Long id) {
+        if (bookingRepository.countActiveBookingsByUserId(id) > 0) {
+            throw new IllegalStateException("Нельзя удалить пользователя с активными бронированиями");
+        }
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             return true;
@@ -102,12 +123,15 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
+    @Transactional
     public User updateUser(Long id, User userDetails) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             User userToUpdate = optionalUser.get();
             userToUpdate.setUsername(userDetails.getUsername());
             userToUpdate.setEmail(userDetails.getEmail());
+            userToUpdate.setFirstName(userDetails.getFirstName());
+            userToUpdate.setLastName(userDetails.getLastName());
             return userRepository.save(userToUpdate);
         }
         return null;
@@ -124,36 +148,78 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
-    // Новые методы для восстановления пароля
-    public boolean sendResetCode(String email) {
+    public User uploadPhoto(Long id, MultipartFile photo) throws IOException {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            String fileName = generateUniqueFileName(photo.getOriginalFilename());
+            Path uploadDir = Paths.get(uploadPath);
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+            if (!Files.isWritable(uploadDir)) {
+                throw new IOException("Директория не доступна для записи: " + uploadPath);
+            }
+            Path filePath = uploadDir.resolve(fileName);
+            try {
+                logger.info("Сохранение файла: " + filePath.toString());
+                Files.write(filePath, photo.getBytes());
+                user.setPhotoPath(fileName);
+                return userRepository.save(user);
+            } catch (IOException e) {
+                logger.error("Ошибка сохранения фото для пользователя с ID: {}", id, e);
+                throw new IOException("Не удалось сохранить фото", e);
+            }
+        }
+        return null;
+    }
+
+    private String generateUniqueFileName(String originalFileName) {
+        String extension = "";
+        int i = originalFileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = originalFileName.substring(i + 1);
+        }
+        return UUID.randomUUID().toString() + "." + extension;
+    }
+
+    public boolean sendResetToken(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            String code = generateRandomCode();
-            user.setResetCode(code);
+            String token = UUID.randomUUID().toString();
+            user.setResetToken(token);
+            user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(10));
             userRepository.save(user);
-            emailService.sendResetCode(email, code);
+            emailService.sendResetLink(email, token);
             return true;
         }
         return false;
     }
 
-    public boolean verifyResetCode(String email, String code) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        return optionalUser.isPresent() && code.equals(optionalUser.get().getResetCode());
-    }
-
-    public void resetPassword(String email, String newPassword) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+    public boolean validateResetToken(String token) {
+        Optional<User> optionalUser = userRepository.findByResetToken(token);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            user.setPassword(passwordEncoder.encode(newPassword));
-            user.setResetCode(null); // Очищаем код после использования
-            userRepository.save(user);
+            return user.getResetTokenExpiry() != null && user.getResetTokenExpiry().isAfter(LocalDateTime.now());
         }
+        return false;
     }
 
-    private String generateRandomCode() {
-        return String.format("%06d", new Random().nextInt(999999));
+    public void resetPassword(String token, String newPassword) {
+        Optional<User> optionalUser = userRepository.findByResetToken(token);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.getResetTokenExpiry() != null && user.getResetTokenExpiry().isAfter(LocalDateTime.now())) {
+                user.setPassword(passwordEncoder.encode(newPassword));
+                user.setResetToken(null);
+                user.setResetTokenExpiry(null);
+                userRepository.save(user);
+            } else {
+                throw new RuntimeException("Токен просрочен");
+            }
+        } else {
+            throw new RuntimeException("Недействительный токен");
+        }
     }
 }

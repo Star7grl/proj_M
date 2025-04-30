@@ -4,13 +4,21 @@ import axios from "axios";
  const apiClient = axios.create({
     baseURL:"http://localhost:8080", // Теперь все запросы будут автоматически включать куки (JWT)
     withCredentials:true
-    // ,
-    // headers: {
-    //     'Content-Type': 'application/json',
-    //     'Accept': 'application/json'
-    //   }
 });
 
+apiClient.interceptors.request.use(
+  (config) => {
+      // Извлекаем токен из кук (предполагаем, что он называется "jwt")
+      const token = document.cookie.split('; ')
+          .find(row => row.startsWith('jwt='))
+          ?.split('=')[1];
+      if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 apiClient.interceptors.response.use(
     (response) => {

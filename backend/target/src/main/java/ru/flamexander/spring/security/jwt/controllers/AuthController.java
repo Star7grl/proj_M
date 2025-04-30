@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
 public class AuthController {
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;

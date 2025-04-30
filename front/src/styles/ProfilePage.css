@@ -1,0 +1,246 @@
+/* ProfilePage.css */
+.profile-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  margin-top: -60px;
+}
+.profile-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  margin-bottom: 1rem;
+}
+
+.profile-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.profile-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.profile-page {
+  max-width: 80%;
+  margin: 60px auto;
+  padding: 3rem;
+  font-family: 'Montserrat', sans-serif;
+  color: #333;
+  animation: fadeIn 0.8s ease-in-out;
+  background-color: rgba(245, 245, 245, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.profile-page h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.profile-page h2::after {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(90deg, #3498db, #9b59b6);
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
+}
+
+.profile-page h3 {
+  font-size: 1.8rem;
+  margin: 2rem 0 1rem;
+  color: #2c3e50;
+  border-bottom: 2px solid #790BB8;
+  padding-bottom: 0.5rem;
+}
+
+.profile-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.profile-form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.profile-form-group input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.profile-form-group input:disabled {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.profile-form-group input:focus {
+  outline: none;
+  border-color: #790BB8;
+  box-shadow: 0 0 0 2px rgba(121, 11, 184, 0.2);
+}
+
+.profile-button {
+  background-color: #790BB8;
+  color: white;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(121, 11, 184, 0.3);
+}
+
+.profile-button:hover {
+  background-color: #5d0890;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(121, 11, 184, 0.4);
+}
+
+.logout-button {
+  background-color: #e74c3c;
+  color: white;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 2rem;
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+}
+
+.profile-photo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.profile-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  margin-bottom: 1rem;
+}
+
+.file-input {
+  margin: 1rem 0;
+}
+
+.bookings-list {
+  list-style: none;
+  padding: 0;
+}
+
+.bookings-list li {
+  background-color: white;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.bookings-list li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .profile-page {
+    max-width: 90%;
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    max-width: 95%;
+    padding: 1.5rem;
+  }
+  
+  .profile-page h2 {
+    font-size: 2rem;
+  }
+  
+  .profile-page h3 {
+    font-size: 1.5rem;
+  }
+  
+  .profile-photo {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-page {
+    padding: 1rem;
+  }
+  
+  .profile-page h2 {
+    font-size: 1.8rem;
+  }
+  
+  .profile-button {
+    width: 100%;
+    margin-right: 0;
+  }
+  
+  .logout-button {
+    width: 100%;
+  }
+}

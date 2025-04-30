@@ -21,4 +21,7 @@ public class Services {
 
     @Column(name = "price")
     private Double servicePrice;
+
+    @Column(name = "image_url") // Новое поле для URL картинки
+    private String imageUrl;
 }

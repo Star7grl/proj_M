@@ -36,6 +36,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+        // Пропускаем запросы на регистрацию и вход без аутентификации
+        if (requestURI.equals("/api/auth/reg") || requestURI.equals("/api/auth/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         // Ваш код фильтрации
         Cookie[] cookies = request.getCookies();
         String jwt = null;

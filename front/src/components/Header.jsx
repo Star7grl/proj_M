@@ -1,15 +1,14 @@
-// components/Header.js
-import React, { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import '../styles/Header.css';
-import useUserStore from '../store/UserStore';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/Header.css";
+import useUserStore from "../store/UserStore";
 import logo from '../assets/images/logo.png';
 
 
 const Header = () => {
   const navigate = useNavigate();
-  // Берем нужные данные из хранилища
   const { isAuth, user, isLoading, checkAuth, logout } = useUserStore();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Проверяем авторизацию при загрузке
   useEffect(() => {
@@ -17,8 +16,14 @@ const Header = () => {
   }, [checkAuth]);
 
 
+  // Перенаправляем на страницу входа
   const handleLogin = () => {
-    navigate('/login'); // Просто переход без лишней логики
+    navigate("/login");
+  };
+
+  // Обработчик открытия/закрытия бургер-меню
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
 
@@ -26,11 +31,10 @@ const Header = () => {
     try {
       await logout();
       if (!useUserStore.getState().isAuth) {
-        navigate('/login'); // Перенаправляем на страницу входа
+        navigate('/login'); 
       }
     } catch (error) {
       console.error('Ошибка при выходе:', error);
-      // Добавили уведомление пользователя об ошибке
       alert('Не удалось выйти. Попробуйте ещё раз.');
     }
   };
@@ -43,35 +47,49 @@ const Header = () => {
   return (
     <header className="header">
       <div className="container">
+        {/* Логотип */}
         <div className="logo">
           <Link to="/">
             <img src={logo} alt="Логотип отеля" className="logo-image" />
           </Link>
         </div>
 
-        <nav className='main-nav'>
+        {/* Бургер-меню */}
+        <div className="burger-menu" onClick={toggleMenu}>
+          <span style={{ transform: isMenuOpen ? "rotate(45deg)" : "none" }}></span>
+          <span style={{ opacity: isMenuOpen ? 0 : 1 }}></span>
+          <span style={{ transform: isMenuOpen ? "rotate(-45deg)" : "none" }}></span>
+        </div>
+
+        {/* Основная навигация */}
+        <nav className={`main-nav ${isMenuOpen ? "mobile-menu-open" : ""}`}>
           <ul>
-            <li><Link to="/rooms">НОМЕРА</Link></li>
-            <li><Link to="/services">УСЛУГИ</Link></li>
-            <li><Link to="/contacts">КОНТАКТЫ</Link></li>
+            <li>
+              <Link to="/rooms">НОМЕРА</Link>
+            </li>
+            <li>
+              <Link to="/services">УСЛУГИ</Link>
+            </li>
+            <li>
+              <Link to="/contacts">КОНТАКТЫ</Link>
+            </li>
           </ul>
         </nav>
 
-        <div className='auth-nav'>
+        {/* Авторизация */}
+        <div className={`auth-nav ${isMenuOpen ? "mobile-menu-open" : ""}`}>
           <ul>
-            {/* Если НЕ авторизован - показываем регистрацию/вход */}
             {!isAuth ? (
               <>
                 <button onClick={handleLogin} className="button login-button">
                   Войти
                 </button>
-                <button onClick={handleLogout} className="button book-button">
+                <Link to="/book" className="book-button">
                   Забронировать
-                </button>
+                </Link>
               </>
             ) : (
               <>
-                {/* Если авторизован - показываем иконку профиля и кнопку выхода */}
                 <li className="profile-icon-container">
                   <Link to="/profile" className="profile-link">
                     <div className="profile-icon">
@@ -86,13 +104,62 @@ const Header = () => {
                 </li>
                 <li>
                   <button onClick={handleLogout} className="button book-button">
-                    Забронировать
+                    Выйти
                   </button>
-                </li>
+                  </li>
               </>
             )}
           </ul>
         </div>
+
+        {/* Мобильное меню */}
+        {isMenuOpen && (
+          <div className="mobile-menu-overlay" onClick={toggleMenu}>
+            <div className="mobile-menu-content" onClick={(e) => e.stopPropagation()}>
+              <div className="mobile-menu-close" onClick={toggleMenu}>
+                &times;
+              </div>
+              <ul>
+                <li>
+                  <Link to="/rooms" onClick={toggleMenu}>
+                    НОМЕРА
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/services" onClick={toggleMenu}>
+                    УСЛУГИ
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/contacts" onClick={toggleMenu}>
+                    КОНТАКТЫ
+                  </Link>
+                </li>
+                <li>
+                  {!isAuth ? (
+                    <>
+                      <button onClick={() => { handleLogin(); toggleMenu(); }}>
+                        Войти
+                      </button>
+                      <Link to="/book" onClick={toggleMenu}>
+                        Забронировать
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/profile" onClick={toggleMenu}>
+                        Профиль
+                      </Link>
+                      <Link to="/book" onClick={toggleMenu}>
+                        Забронировать
+                      </Link>
+                    </>
+                  )}
+                </li>
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );

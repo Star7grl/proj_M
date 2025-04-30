@@ -2,11 +2,6 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 *{
@@ -24,16 +19,16 @@
     flex-wrap: wrap; /* Перенос на маленьких экранах */
   }
 
-  .button {
+  .button, .book-button, .send-button, .pay-button  {
     background: none;
     border: 0.5px solid #ffffff;
     color: white;
     cursor: pointer;
     font: inherit;
-    padding: 15px 30px;
+    padding: 10px 30px;
     margin: 0;
     text-decoration: none;
-    border-radius: 0;
+    border-radius: 30px;
   }
   
   .button:hover {
@@ -41,14 +36,15 @@
     color: black;
   }
   
-  .book-button {
+  .book-button, .reg-button, .send-button, .pay-button {
     background-color: #763ba7db;
     border: none;
   }
   
-  .book-button:hover {
+  .book-button:hover, .reg-button:hover, .send-button:hover,.pay-button {
     background: #642f8f;
     color: white;
   }
+
 
 

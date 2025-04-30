@@ -1,71 +1,82 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import RoomsApi from '../config/RoomsApi';
+import Pagination from '../components/Pagination';
+import RoomCard from '../components/RoomCard';
 import '../styles/Rooms.css';
-import nom1 from '../assets/images/ном 1.png'; 
-import nom2 from '../assets/images/ном 2.png'; 
-import nom3 from '../assets/images/ном 3.png'; 
-import nom4 from '../assets/images/ном 4.png'; 
+import hotelBackground from "../assets/images/номера.png";
 
+const RoomsPage = () => {
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 9;
+  const [searchQuery, setSearchQuery] = useState('');
 
-const ServicesPage = () => {
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        let data;
+        if (searchQuery) {
+          data = await RoomsApi.searchRoomsByTitle(searchQuery);
+        } else {
+          data = await RoomsApi.getAllRooms(currentPage, itemsPerPage);
+        }
+        setRooms(data.content || data); // Если есть пагинация, берем content, иначе весь массив
+        setTotalItems(data.totalElements || data.length); // Устанавливаем общее количество
+      } catch (error) {
+        console.error('Ошибка загрузки комнат:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRooms();
+  }, [currentPage, searchQuery]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Сбрасываем на первую страницу при новом поиске
+  };
+
+  if (loading) return <div>Загрузка...</div>;
+
   return (
-    <div className="home-page">
-      {/* hero */}
-      <section className="hero">
-        <img src={nom1} alt="Поддержка" className="support-image" />
-        <div className="hero-content"><h1>Номера</h1></div>
-      </section>
-
-      <section className="cards_stay container">
-        <div className="card_stay">
-          <img src={nom1} alt="Классик" />
-          <div className="about_text">
-            <h2>Классик</h2>
-            <p>
-              Стильный и комфортабельный двухкомнатный двухместный номер с балконом. В номере предусмотрено все для Вашего удобства: кухонный уголок, гардеробная, ванная комната, гостиная с мягкой мебелью и спальня с одной двуспальной кроватью.
-            </p>
-            <h3> от 5 000 руб./сутки</h3>
-            <button><a href="./basket.html">Забронировать</a></button>
-          </div>
-        </div>
-
-        <div className="card_stay reverse_sh">
-          <div className="about_text">
-            <h2>Делюкс</h2>
-            <p>
-              Стильный и комфортабельный двухкомнатный двухместный номер с балконом. В номере предусмотрено все для Вашего удобства: кухонный уголок, гардеробная, ванная комната, гостиная с мягкой мебелью и спальня с одной двуспальной кроватью.
-            </p>
-            <h3> от 7 000 руб./сутки</h3>
-            <button><a href="./basket.html">Забронировать</a></button>
-          </div>
-          <img src={nom2} alt="Делюкс" />
-        </div>
-
-        <div className="card_stay">
-          <img src={nom3} alt="Люкс / Люкс Премьер" />
-          <div className="about_text">
-            <h2>Люкс / Люкс Премьер</h2>
-            <p>
-              Стильный и комфортабельный двухкомнатный двухместный номер с балконом. В номере предусмотрено все для Вашего удобства: кухонный уголок, гардеробная, ванная комната, гостиная с мягкой мебелью и спальня с одной двуспальной кроватью.
-            </p>
-            <h3> от 10 000 руб./сутки</h3>
-            <button><a href="./basket.html">Забронировать</a></button>
-          </div>
-        </div>
-
-        <div className="card_stay reverse_sh">
-          <div className="about_text">
-            <h2>Гранд Люкс</h2>
-            <p>
-              Стильный и комфортабельный двухкомнатный двухместный номер с балконом. В номере предусмотрено все для Вашего удобства: кухонный уголок, гардеробная, ванная комната, гостиная с мягкой мебелью и спальня с одной двуспальной кроватью.
-            </p>
-            <h3> от 15 000 руб./сутки</h3>
-            <button><a href="./basket.html">Забронировать</a></button>
-          </div>
-          <img src={nom4} alt="Гранд Люкс" />
-        </div>
-      </section>
+    <div className="rooms-page-wrapper">
+    {/* Фоновое изображение с затемнением */}
+    <div className="rooms-background">
+      <img src={hotelBackground} alt="Фон отеля" />
+      <div className="background-overlay"></div>
     </div>
+
+    <div className="rooms-page">
+      <h1>НАШИ НОМЕРА</h1>
+      <input
+        type="text"
+        placeholder="Поиск по названию"
+        value={searchQuery}
+        onChange={handleSearch}
+        className="search-input"
+      />
+      <div className="cards_stay">
+        {rooms.map((room) => (
+          <RoomCard key={room.roomId} room={room} />
+        ))}
+      </div>
+      {!searchQuery && (
+        <Pagination
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      )}
+    </div>
+  </div>
   );
 };
 
-export default ServicesPage;
+export default RoomsPage;
