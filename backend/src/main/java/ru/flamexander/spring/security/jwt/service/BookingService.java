@@ -70,7 +70,7 @@ public class BookingService {
         booking.setUser(user);
         booking.setRoom(room);
         booking.setService(service);
-        booking.setStatus("PENDING"); // Устанавливаем статус по умолчанию
+        booking.setStatus("PENDING");
 
         Booking savedBooking = bookingRepository.save(booking);
         return savedBooking;

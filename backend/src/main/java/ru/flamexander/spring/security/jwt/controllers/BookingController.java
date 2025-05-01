@@ -68,9 +68,16 @@ public class BookingController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBooking(@PathVariable Long id) {
-        bookingService.deleteBooking(id);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteBooking(@PathVariable Long id) {
+        try {
+            bookingService.deleteBooking(id);
+            return ResponseEntity.noContent().build(); // 204 No Content при успехе
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); // 404 если не найдено
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при удалении бронирования"); // 500 при ошибке
+        }
     }
 
     @GetMapping("/user/{userId}")

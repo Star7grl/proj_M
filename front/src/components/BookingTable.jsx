@@ -64,6 +64,18 @@ const BookingTable = () => {
         }
     };
 
+    const handleDeleteBooking = async (id) => {
+        if (window.confirm('Вы уверены, что хотите удалить это бронирование?')) {
+            try {
+                await apiClient.delete(`/api/bookings/delete/${id}`);
+                setItems(items.filter(i => i.id !== id));
+            } catch (error) {
+                console.error('Ошибка удаления бронирования:', error);
+                alert('Не удалось удалить бронирование');
+            }
+        }
+    };
+
     if (loading) return <div className="loading">Загрузка...</div>;
 
     return (
@@ -94,14 +106,17 @@ const BookingTable = () => {
                         <td>{item.type === 'booking' ? item.status : 'N/A'}</td>
                         <td>
                             {item.type === 'booking' ? (
-                                <select
-                                    value={item.status}
-                                    onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                                >
-                                    <option value="PENDING">В ОЖИДАНИИ</option>
-                                    <option value="CONFIRMED">ПОДТВЕРЖДЕННЫЙ</option>
-                                    <option value="REJECTED">ОТКЛОНЕННЫЙ</option>
-                                </select>
+                                <>
+                                    <select
+                                        value={item.status}
+                                        onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                                    >
+                                        <option value="PENDING">В ОЖИДАНИИ</option>
+                                        <option value="CONFIRMED">ПОДТВЕРЖДЕННЫЙ</option>
+                                        <option value="REJECTED">ОТКЛОНЕННЫЙ</option>
+                                    </select>
+                                    <button onClick={() => handleDeleteBooking(item.id)}>Удалить</button>
+                                </>
                             ) : (
                                 'Нет действий'
                             )}
