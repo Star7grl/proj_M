@@ -2,6 +2,7 @@ package ru.flamexander.spring.security.jwt.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -221,5 +222,10 @@ public class UserService implements UserDetailsService {
         } else {
             throw new RuntimeException("Недействительный токен");
         }
+    }
+
+    public User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
     }
 }

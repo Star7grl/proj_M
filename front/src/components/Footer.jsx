@@ -54,6 +54,7 @@ const Footer = () => {
       <div className="footer-copyright">
         © 2025 Gloria, created by Stepanova Milena
       </div>
+      <div className="footer-copyright">Кыз, рахим итегез в хостл</div>
     </footer>
   );
 };

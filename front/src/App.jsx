@@ -19,6 +19,7 @@ import UsersManagementPage from './pages/UsersManagementPage';
 import BookingsManagementPage from './pages/BookingsManagementPage';
 import PaymentPage from './pages/PaymentPage';
 import ContactsPage from './pages/ContactsPage';
+import SupportMessagesManagementPage from './pages/SupportMessagesManagementPage'; // Новый импорт
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -68,6 +69,7 @@ const App = () => {
                 <Route path="/admin" element={<ProtectedRoute role="ADMIN"><AdminPanelPage /></ProtectedRoute>} />
                 <Route path="/admin/services" element={<ProtectedRoute role="ADMIN"><ServicesManagementPage /></ProtectedRoute>} />
                 <Route path="/admin/rooms" element={<ProtectedRoute role="ADMIN"><RoomsManagementPage /></ProtectedRoute>} />
+                <Route path="/admin/support-messages" element={<ProtectedRoute role="ADMIN"><SupportMessagesManagementPage /></ProtectedRoute>} /> {/* Новый маршрут */}
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />

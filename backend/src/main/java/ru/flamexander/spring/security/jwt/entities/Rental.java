@@ -31,4 +31,7 @@ public class Rental {
 
     @Column(name = "check_out_date")
     private LocalDate checkOutDate;
+
+    @Column(name = "hostes_id") // Новое поле для связи с хостесом
+    private Long hostesId;
 }

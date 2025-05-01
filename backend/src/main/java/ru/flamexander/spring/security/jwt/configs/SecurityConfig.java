@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import java.util.List;
 
 @Configuration
@@ -51,9 +52,9 @@ public class SecurityConfig {
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/services/**").permitAll()
                 .antMatchers("/api/users").hasRole("ADMIN")
-                .antMatchers("/api/rooms/admin").permitAll() // Явно разрешаем доступ к /api/rooms/admin
-                .antMatchers("/api/rooms/**").permitAll()    // Разрешаем доступ ко всем /api/rooms/**
-                .antMatchers("/api/bookings/**").permitAll() // Разрешаем доступ к /api/bookings/**
+                .antMatchers("/api/rooms/admin").permitAll()
+                .antMatchers("/api/rooms/**").permitAll()
+                .antMatchers("/api/bookings/**").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/private/**").authenticated()
                 .antMatchers("/api/auth/me").authenticated()
@@ -62,8 +63,10 @@ public class SecurityConfig {
                 .antMatchers("/api/bookings/user/**").authenticated()
                 .antMatchers("/api/bookings/add").authenticated()
                 .antMatchers("/api/rooms/add").hasRole("ADMIN")
-                .antMatchers("/api/rentals/**").hasRole("HOSTES") // Добавлено правило для /api/rentals
-                .antMatchers("/api/users/**").authenticated() // Добавляем разрешение для /api/users/**
+                .antMatchers("/api/rentals/**").hasAnyRole("HOSTES", "ADMIN")
+                .antMatchers("/api/users/**").authenticated()
+                .antMatchers("/api/support/send").authenticated() // Защищаем отправку сообщений
+                .antMatchers("/api/support/messages").hasRole("ADMIN") // Доступ только для админов
                 .anyRequest().denyAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

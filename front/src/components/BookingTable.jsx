@@ -1,33 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../config/apiClient';
-import '../styles/BookingTable.css'; // Импортируем стили
+import '../styles/BookingTable.css';
 
 const BookingTable = () => {
-    const [bookings, setBookings] = useState([]);
+    const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchBookings = async () => {
+        const fetchData = async () => {
             try {
-                const response = await apiClient.get('/api/bookings');
-                setBookings(response.data);
+                // Загружаем бронирования
+                const bookingsResponse = await apiClient.get('/api/bookings');
+                // Загружаем аренды
+                const rentalsResponse = await apiClient.get('/api/rentals/all');
+
+                // Преобразуем бронирования в общий формат
+                const bookings = bookingsResponse.data.map(booking => ({
+                    id: booking.bookingId,
+                    type: 'booking',
+                    userOrVisitor: booking.user.username,
+                    room: booking.room.roomTitle,
+                    checkInDate: booking.checkInDate,
+                    checkOutDate: booking.checkOutDate,
+                    status: booking.status
+                }));
+
+                // Преобразуем аренды в общий формат
+                const rentals = rentalsResponse.data.map(rental => ({
+                    id: rental.id,
+                    type: 'rental',
+                    userOrVisitor: `${rental.visitorFirstName} ${rental.visitorLastName}`,
+                    room: rental.room.roomTitle,
+                    checkInDate: rental.checkInDate,
+                    checkOutDate: rental.checkOutDate,
+                    status: 'N/A' // У аренд нет статуса
+                }));
+
+                // Объединяем списки
+                setItems([...bookings, ...rentals]);
             } catch (error) {
-                console.error('Ошибка загрузки бронирований:', error);
+                console.error('Ошибка загрузки данных:', error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchBookings();
+        fetchData();
     }, []);
 
-    const handleStatusChange = async (bookingId, newStatus) => {
+    const handleStatusChange = async (id, newStatus) => {
+        const item = items.find(i => i.id === id);
+        if (item.type !== 'booking') {
+            alert('Нельзя изменить статус для аренды');
+            return;
+        }
         try {
-            await apiClient.put(`/api/bookings/updateStatus/${bookingId}`, null, {
+            await apiClient.put(`/api/bookings/updateStatus/${id}`, null, {
                 params: { status: newStatus }
             });
-            setBookings(bookings.map(booking =>
-                booking.bookingId === bookingId ? { ...booking, status: newStatus } : booking
-            ));
+            setItems(items.map(i => i.id === id ? { ...i, status: newStatus } : i));
         } catch (error) {
             console.error('Ошибка обновления статуса:', error);
             alert('Не удалось обновить статус');
@@ -43,7 +73,8 @@ const BookingTable = () => {
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Пользователь</th>
+                    <th>Тип</th>
+                    <th>Пользователь/Посетитель</th>
                     <th>Комната</th>
                     <th>Дата заезда</th>
                     <th>Дата выезда</th>
@@ -52,23 +83,28 @@ const BookingTable = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {bookings.map(booking => (
-                    <tr key={booking.bookingId}>
-                        <td>{booking.bookingId}</td>
-                        <td>{booking.user.username}</td>
-                        <td>{booking.room.roomTitle}</td>
-                        <td>{booking.checkInDate}</td>
-                        <td>{booking.checkOutDate}</td>
-                        <td>{booking.status}</td>
+                {items.map(item => (
+                    <tr key={item.id}>
+                        <td>{item.id}</td>
+                        <td>{item.type === 'booking' ? 'Бронирование' : 'Аренда'}</td>
+                        <td>{item.userOrVisitor}</td>
+                        <td>{item.room}</td>
+                        <td>{item.checkInDate}</td>
+                        <td>{item.checkOutDate}</td>
+                        <td>{item.type === 'booking' ? item.status : 'N/A'}</td>
                         <td>
-                            <select
-                                value={booking.status}
-                                onChange={(e) => handleStatusChange(booking.bookingId, e.target.value)}
-                            >
-                                <option value="PENDING">В ОЖИДАНИИ</option>
-                                <option value="CONFIRMED">ПОДТВЕРЖДЕННЫЙ</option>
-                                <option value="REJECTED">ОТКЛОНЕННЫЙ</option>
-                            </select>
+                            {item.type === 'booking' ? (
+                                <select
+                                    value={item.status}
+                                    onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                                >
+                                    <option value="PENDING">В ОЖИДАНИИ</option>
+                                    <option value="CONFIRMED">ПОДТВЕРЖДЕННЫЙ</option>
+                                    <option value="REJECTED">ОТКЛОНЕННЫЙ</option>
+                                </select>
+                            ) : (
+                                'Нет действий'
+                            )}
                         </td>
                     </tr>
                 ))}

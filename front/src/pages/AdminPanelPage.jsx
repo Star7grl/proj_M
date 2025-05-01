@@ -34,6 +34,11 @@ const AdminPanelPage = () => {
                         <span>Управление бронированиями</span>
                     </button>
                 </Link>
+                <Link to="/admin/support-messages" className="admin-link">
+                    <button className="admin-button panel-btn">
+                        <span>Сообщения от пользователей</span>
+                    </button>
+                </Link>
             </div>
         </div>
     );

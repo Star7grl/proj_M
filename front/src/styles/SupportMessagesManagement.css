@@ -1,0 +1,26 @@
+.support-messages-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.support-messages-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.support-messages-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.support-messages-container li {
+    background-color: #f5f5f5;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.support-messages-container strong {
+    color: #333;
+}

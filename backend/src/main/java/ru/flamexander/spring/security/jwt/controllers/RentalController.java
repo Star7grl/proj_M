@@ -1,4 +1,3 @@
-// RentalController.java
 package ru.flamexander.spring.security.jwt.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import ru.flamexander.spring.security.jwt.service.UserService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,30 +23,47 @@ public class RentalController {
     private RentalRepository rentalRepository;
 
     @Autowired
-    private UserService userService; // Добавьте UserService
+    private UserService userService;
 
     @GetMapping
     @PreAuthorize("hasRole('HOSTES')")
     public ResponseEntity<List<Rental>> getRentalsForHostes() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName(); // Получаем имя пользователя
+        String username = auth.getName();
 
         User hostes = userService.findByUsername(username).orElse(null);
         if (hostes == null) {
-            return ResponseEntity.badRequest().build(); // Или другой подходящий ответ
+            return ResponseEntity.badRequest().build();
         }
 
+        // Фильтруем аренды по hostesId
         List<Rental> rentals = rentalRepository.findAll().stream()
-                .filter(rental -> rental.getRoom().getRoomId().equals(hostes.getId()))
-                .collect(Collectors.toList()); // Получаем все аренды
+                .filter(rental -> rental.getHostesId() != null && rental.getHostesId().equals(hostes.getId()))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(rentals);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('HOSTES')")
     public ResponseEntity<Rental> createRental(@RequestBody Rental rental) {
-        rental.setCheckInDate(LocalDate.now()); // Текущая дата заезда
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        User hostes = userService.findByUsername(username).orElse(null);
+        if (hostes == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        rental.setHostesId(hostes.getId()); // Сохраняем ID хостеса
+        rental.setCheckInDate(LocalDate.now());
         Rental savedRental = rentalRepository.save(rental);
         return ResponseEntity.ok(savedRental);
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('HOSTES', 'ADMIN')")
+    public ResponseEntity<List<Rental>> getAllRentals() {
+        List<Rental> rentals = rentalRepository.findAll();
+        return ResponseEntity.ok(rentals);
     }
 }
