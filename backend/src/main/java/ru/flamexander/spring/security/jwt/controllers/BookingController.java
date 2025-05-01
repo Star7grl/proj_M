@@ -9,9 +9,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.flamexander.spring.security.jwt.dtos.BookingDto;
 import ru.flamexander.spring.security.jwt.entities.Booking;
+import ru.flamexander.spring.security.jwt.entities.Rental;
 import ru.flamexander.spring.security.jwt.exceptions.ResourceNotFoundException;
 import ru.flamexander.spring.security.jwt.exceptions.RoomAlreadyBookedException;
 import ru.flamexander.spring.security.jwt.repositories.BookingRepository;
+import ru.flamexander.spring.security.jwt.repositories.RentalRepository;
 import ru.flamexander.spring.security.jwt.service.BookingService;
 
 import javax.validation.Valid;
@@ -30,6 +32,7 @@ public class BookingController {
     private final BookingService bookingService;
     private final ModelMapper modelMapper;
     private final BookingRepository bookingRepository;
+    private final RentalRepository rentalRepository; // Добавлен репозиторий для rental
 
     @GetMapping
     public List<Booking> getAllBookings() {
@@ -72,11 +75,11 @@ public class BookingController {
     public ResponseEntity<?> deleteBooking(@PathVariable Long id) {
         try {
             bookingService.deleteBooking(id);
-            return ResponseEntity.noContent().build(); // 204 No Content при успехе
+            return ResponseEntity.noContent().build();
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); // 404 если не найдено
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при удалении бронирования"); // 500 при ошибке
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при удалении бронирования");
         }
     }
 
@@ -88,8 +91,11 @@ public class BookingController {
     @GetMapping("/{roomId}/booked-dates")
     public ResponseEntity<Map<String, List<LocalDate>>> getBookedDates(@PathVariable Long roomId) {
         List<Booking> bookings = bookingService.getAllBookings();
+        List<Rental> rentals = rentalRepository.findAll(); // Получаем все аренды
+
+        // Получаем занятые даты из таблицы booking
         List<LocalDate> bookedDates = bookings.stream()
-                .filter(booking -> booking.getRoom().getRoomId().equals(roomId))
+                .filter(booking -> booking.getRoom() != null && booking.getRoom().getRoomId().equals(roomId))
                 .flatMap(booking -> {
                     List<LocalDate> dates = new ArrayList<>();
                     LocalDate startDate = booking.getCheckInDate();
@@ -103,16 +109,37 @@ public class BookingController {
                 })
                 .collect(Collectors.toList());
 
+        // Получаем занятые даты из таблицы rental
+        List<LocalDate> rentalDates = rentals.stream()
+                .filter(rental -> rental.getRoom() != null && rental.getRoom().getRoomId().equals(roomId))
+                .flatMap(rental -> {
+                    List<LocalDate> dates = new ArrayList<>();
+                    LocalDate startDate = rental.getCheckInDate();
+                    LocalDate endDate = rental.getCheckOutDate();
+                    LocalDate currentDate = startDate;
+                    while (!currentDate.isAfter(endDate)) {
+                        dates.add(currentDate);
+                        currentDate = currentDate.plusDays(1);
+                    }
+                    return dates.stream();
+                })
+                .collect(Collectors.toList());
+
+        // Объединяем даты из booking и rental
+        List<LocalDate> allBookedDates = new ArrayList<>(bookedDates);
+        allBookedDates.addAll(rentalDates);
+
+        // Получаем прошедшие даты
         LocalDate today = LocalDate.now();
         List<LocalDate> pastDates = new ArrayList<>();
-        LocalDate date = today.minusDays(365); // Прошедшие даты за год (можно настроить)
+        LocalDate date = today.minusDays(365);
         while (!date.isAfter(today)) {
             pastDates.add(date);
             date = date.plusDays(1);
         }
 
         Map<String, List<LocalDate>> response = new HashMap<>();
-        response.put("booked", bookedDates);
+        response.put("booked", allBookedDates);
         response.put("past", pastDates);
 
         return ResponseEntity.ok(response);

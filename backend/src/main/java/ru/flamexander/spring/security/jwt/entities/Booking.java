@@ -1,14 +1,14 @@
 package ru.flamexander.spring.security.jwt.entities;
 
-import lombok.*;
+import lombok.Data;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "bookings")
-@Getter
-@Setter
+@Data
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,19 +22,16 @@ public class Booking {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @Column(name = "check_in_date")
+    @ManyToMany
+    @JoinTable(
+            name = "booking_services",
+            joinColumns = @JoinColumn(name = "booking_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private List<Services> services = new ArrayList<>();
+
     private LocalDate checkInDate;
-
-    @Column(name = "check_out_date")
     private LocalDate checkOutDate;
-
-    @ManyToOne
-    @JoinColumn(name = "service_id")
-    private Services service;
-
-    @Column(name = "total_sum")
+    private String status;
     private BigDecimal totalSum;
-
-    @Column(name = "status")
-    private String status; // Новое поле для статуса
 }

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import apiClient from "../config/apiClient";
+import ServicesApi from '../config/servicesApi';
 import "../styles/Admin.css";
 
 const RentalFormPage = () => {
@@ -16,10 +17,32 @@ const RentalFormPage = () => {
         visitorLastName: "",
         visitorPhone: "",
     });
+    const [services, setServices] = useState([]);
+    const [selectedServices, setSelectedServices] = useState([]);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const data = await ServicesApi.getAllServices();
+                setServices(data.services || []);
+            } catch (error) {
+                console.error('Ошибка загрузки услуг:', error);
+            }
+        };
+        fetchServices();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSelectService = (serviceId) => {
+        if (selectedServices.includes(serviceId)) {
+            setSelectedServices(selectedServices.filter(id => id !== serviceId));
+        } else {
+            setSelectedServices([...selectedServices, serviceId]);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -30,6 +53,7 @@ const RentalFormPage = () => {
                 room: { roomId: parseInt(roomId) },
                 checkInDate: checkInDate,
                 checkOutDate: checkOutDate,
+                serviceIds: selectedServices,
             });
             alert("Аренда успешно создана!");
             navigate("/hostes/rentals");
@@ -66,6 +90,19 @@ const RentalFormPage = () => {
                     placeholder="Телефон посетителя"
                     required
                 />
+                <div className="services-selection">
+                    <h3>Дополнительные услуги</h3>
+                    {services.map(service => (
+                        <div key={service.serviceId}>
+                            <input
+                                type="checkbox"
+                                checked={selectedServices.includes(service.serviceId)}
+                                onChange={() => handleSelectService(service.serviceId)}
+                            />
+                            <span>{service.serviceName} - {service.servicePrice} руб.</span>
+                        </div>
+                    ))}
+                </div>
                 <button type="submit">Арендовать</button>
             </form>
         </div>

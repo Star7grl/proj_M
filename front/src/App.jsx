@@ -19,7 +19,8 @@ import UsersManagementPage from './pages/UsersManagementPage';
 import BookingsManagementPage from './pages/BookingsManagementPage';
 import PaymentPage from './pages/PaymentPage';
 import ContactsPage from './pages/ContactsPage';
-import SupportMessagesManagementPage from './pages/SupportMessagesManagementPage'; // Новый импорт
+import SupportMessagesManagementPage from './pages/SupportMessagesManagementPage';
+import ServicesPurchasePage from './pages/ServicesPurchasePage'; // Новый импорт
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -63,18 +64,18 @@ const App = () => {
                 <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 <Route path="/contacts" element={<ContactsPage />} />
                 <Route path="/hostes/rentals" element={<ProtectedRoute role="HOSTES"><RentalsListPage /></ProtectedRoute>} />
-                {/* Защищенные маршруты администратора */}
                 <Route path="/admin/users" element={<ProtectedRoute role="ADMIN"><UsersManagementPage /></ProtectedRoute>} />
                 <Route path="/admin/bookings" element={<ProtectedRoute role="ADMIN"><BookingsManagementPage /></ProtectedRoute>} />
                 <Route path="/admin" element={<ProtectedRoute role="ADMIN"><AdminPanelPage /></ProtectedRoute>} />
                 <Route path="/admin/services" element={<ProtectedRoute role="ADMIN"><ServicesManagementPage /></ProtectedRoute>} />
                 <Route path="/admin/rooms" element={<ProtectedRoute role="ADMIN"><RoomsManagementPage /></ProtectedRoute>} />
-                <Route path="/admin/support-messages" element={<ProtectedRoute role="ADMIN"><SupportMessagesManagementPage /></ProtectedRoute>} /> {/* Новый маршрут */}
+                <Route path="/admin/support-messages" element={<ProtectedRoute role="ADMIN"><SupportMessagesManagementPage /></ProtectedRoute>} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
                 <Route path="/hostes/rooms" element={<ProtectedRoute role="HOSTES"><RoomSelectionPage /></ProtectedRoute>} />
                 <Route path="/hostes/rentals/new" element={<ProtectedRoute role="HOSTES"><RentalFormPage /></ProtectedRoute>} />
+                <Route path="/services/purchase" element={<ProtectedRoute><ServicesPurchasePage /></ProtectedRoute>} /> {/* Новый маршрут */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
             <Footer />

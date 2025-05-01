@@ -9,34 +9,31 @@ const BookingTable = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Загружаем бронирования
                 const bookingsResponse = await apiClient.get('/api/bookings');
-                // Загружаем аренды
                 const rentalsResponse = await apiClient.get('/api/rentals/all');
 
-                // Преобразуем бронирования в общий формат
                 const bookings = bookingsResponse.data.map(booking => ({
                     id: booking.bookingId,
                     type: 'booking',
                     userOrVisitor: booking.user.username,
-                    room: booking.room.roomTitle,
+                    room: booking.room ? booking.room.roomTitle : 'N/A',
+                    services: booking.services,
                     checkInDate: booking.checkInDate,
                     checkOutDate: booking.checkOutDate,
                     status: booking.status
                 }));
 
-                // Преобразуем аренды в общий формат
                 const rentals = rentalsResponse.data.map(rental => ({
                     id: rental.id,
                     type: 'rental',
                     userOrVisitor: `${rental.visitorFirstName} ${rental.visitorLastName}`,
-                    room: rental.room.roomTitle,
+                    room: rental.room ? rental.room.roomTitle : 'N/A',
+                    services: rental.services,
                     checkInDate: rental.checkInDate,
                     checkOutDate: rental.checkOutDate,
-                    status: 'N/A' // У аренд нет статуса
+                    status: 'N/A'
                 }));
 
-                // Объединяем списки
                 setItems([...bookings, ...rentals]);
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
@@ -88,6 +85,7 @@ const BookingTable = () => {
                     <th>Тип</th>
                     <th>Пользователь/Посетитель</th>
                     <th>Комната</th>
+                    <th>Услуги</th>
                     <th>Дата заезда</th>
                     <th>Дата выезда</th>
                     <th>Статус</th>
@@ -101,6 +99,15 @@ const BookingTable = () => {
                         <td>{item.type === 'booking' ? 'Бронирование' : 'Аренда'}</td>
                         <td>{item.userOrVisitor}</td>
                         <td>{item.room}</td>
+                        <td>
+                            {item.services && item.services.length > 0 ? (
+                                <ul>
+                                    {item.services.map(service => (
+                                        <li key={service.serviceId}>{service.serviceName}</li>
+                                    ))}
+                                </ul>
+                            ) : 'Нет услуг'}
+                        </td>
                         <td>{item.checkInDate}</td>
                         <td>{item.checkOutDate}</td>
                         <td>{item.type === 'booking' ? item.status : 'N/A'}</td>

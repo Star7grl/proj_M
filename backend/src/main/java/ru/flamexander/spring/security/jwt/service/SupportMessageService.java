@@ -17,10 +17,25 @@ public class SupportMessageService {
     }
 
     public SupportMessage createSupportMessage(SupportMessage message) {
+        message.setStatus("Не назначен"); // Устанавливаем статус по умолчанию
         return supportMessageRepository.save(message);
     }
 
     public List<SupportMessage> getAllSupportMessages() {
         return supportMessageRepository.findAll();
+    }
+
+    public SupportMessage updateMessageStatus(Long id, String status) {
+        SupportMessage message = supportMessageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Сообщение не найдено"));
+        if (!isValidStatus(status)) {
+            throw new IllegalArgumentException("Недопустимый статус: " + status);
+        }
+        message.setStatus(status);
+        return supportMessageRepository.save(message);
+    }
+
+    private boolean isValidStatus(String status) {
+        return "Не назначен".equals(status) || "На рассмотрении".equals(status) || "Решён".equals(status);
     }
 }

@@ -485,3 +485,6 @@ VALUES (
         8,
         'http://example.com/room8_img1.jpg'
     );
+
+
+ALTER TABLE support_messages ADD COLUMN status VARCHAR(255) NOT NULL DEFAULT 'Не назначен';

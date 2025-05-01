@@ -41,8 +41,21 @@ public class SupportMessageController {
     public ResponseEntity<List<SupportMessageDto>> getAllSupportMessages() {
         List<SupportMessage> messages = supportMessageService.getAllSupportMessages();
         List<SupportMessageDto> messageDtos = messages.stream()
-                .map(message -> new SupportMessageDto(message.getId(), message.getMessageText(), message.getUser().getUsername(), message.getCreatedAt()))
+                .map(message -> new SupportMessageDto(message.getId(), message.getMessageText(), message.getUser().getUsername(), message.getCreatedAt(), message.getStatus()))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(messageDtos);
+    }
+
+    @PutMapping("/messages/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateMessageStatus(@PathVariable Long id, @RequestParam String status) {
+        try {
+            SupportMessage updatedMessage = supportMessageService.updateMessageStatus(id, status);
+            return ResponseEntity.ok(updatedMessage);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
     }
 }

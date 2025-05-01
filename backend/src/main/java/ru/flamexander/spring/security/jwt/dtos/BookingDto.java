@@ -1,10 +1,10 @@
 package ru.flamexander.spring.security.jwt.dtos;
 
 import lombok.Data;
-
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class BookingDto {
@@ -13,8 +13,7 @@ public class BookingDto {
     @NotNull(message = "User ID cannot be null")
     private Long userId;
 
-    @NotNull(message = "Room ID cannot be null")
-    private Long roomId;
+    private Long roomId; // Сделано необязательным
 
     @NotNull(message = "Check-in date cannot be null")
     private LocalDate checkInDate;
@@ -22,7 +21,7 @@ public class BookingDto {
     @NotNull(message = "Check-out date cannot be null")
     private LocalDate checkOutDate;
 
-    private Long serviceId;
+    private List<Long> serviceIds; // Список ID услуг
     private BigDecimal totalSum;
-    private String status; // Новое поле для статуса
+    private String status;
 }

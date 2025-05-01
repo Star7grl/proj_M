@@ -160,14 +160,26 @@ const ProfilePage = () => {
         </div>
 
         <div className="bookings-container">
-          <h3>Ваши бронирования</h3>
+          <h3>Ваши бронирования и услуги</h3>
           <ul>
             {bookings.map((booking) => (
                 <li key={booking.bookingId} className="booking-item">
-                  <p>Комната: {booking.room.roomTitle}</p>
+                  {booking.room ? (
+                      <p>Комната: {booking.room.roomTitle}</p>
+                  ) : (
+                      <p>Услуги:</p>
+                  )}
+                  {booking.services && booking.services.length > 0 && (
+                      <ul>
+                        {booking.services.map(service => (
+                            <li key={service.serviceId}>{service.serviceName} - {service.servicePrice} руб.</li>
+                        ))}
+                      </ul>
+                  )}
                   <p>Дата заезда: {booking.checkInDate}</p>
                   <p>Дата выезда: {booking.checkOutDate}</p>
                   <p>Статус: {translateStatus(booking.status)}</p>
+                  <p>Общая сумма: {booking.totalSum} руб.</p>
                 </li>
             ))}
           </ul>

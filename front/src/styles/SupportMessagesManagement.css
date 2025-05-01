@@ -24,3 +24,10 @@
 .support-messages-container strong {
     color: #333;
 }
+
+.support-messages-container select {
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}

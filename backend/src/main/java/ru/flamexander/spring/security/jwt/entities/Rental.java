@@ -3,35 +3,38 @@ package ru.flamexander.spring.security.jwt.entities;
 import lombok.Data;
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
-@Table(name = "rentals")
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "visitor_first_name")
     private String visitorFirstName;
-
-    @Column(name = "visitor_last_name")
     private String visitorLastName;
-
-    @Column(name = "visitor_phone")
     private String visitorPhone;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @Column(name = "check_in_date")
-    private LocalDate checkInDate;
+    @ManyToMany
+    @JoinTable(
+            name = "rental_services",
+            joinColumns = @JoinColumn(name = "rental_id"),
+            inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private List<Services> services = new ArrayList<>();
 
-    @Column(name = "check_out_date")
+    private LocalDate checkInDate;
     private LocalDate checkOutDate;
 
-    @Column(name = "hostes_id") // Новое поле для связи с хостесом
+    @Column(name = "hostes_id")
     private Long hostesId;
+
+    @Transient
+    private List<Long> serviceIds; // Временное поле для получения ID услуг из запроса
 }

@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .antMatchers("/public/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/services/**").permitAll()
+                .antMatchers("/api/service-orders/**").authenticated()
                 .antMatchers("/api/users").hasRole("ADMIN")
                 .antMatchers("/api/rooms/admin").permitAll()
                 .antMatchers("/api/rooms/**").permitAll()
@@ -65,8 +66,9 @@ public class SecurityConfig {
                 .antMatchers("/api/rooms/add").hasRole("ADMIN")
                 .antMatchers("/api/rentals/**").hasAnyRole("HOSTES", "ADMIN")
                 .antMatchers("/api/users/**").authenticated()
-                .antMatchers("/api/support/send").authenticated() // Защищаем отправку сообщений
-                .antMatchers("/api/support/messages").hasRole("ADMIN") // Доступ только для админов
+                .antMatchers("/api/support/send").authenticated()
+                .antMatchers("/api/support/messages").hasRole("ADMIN")
+                .antMatchers("/api/support/messages/**").hasRole("ADMIN")
                 .anyRequest().denyAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -17,6 +17,16 @@ const SupportApi = {
             throw error;
         }
     },
+    updateMessageStatus: async (id, status) => {
+        try {
+            const response = await apiClient.put(`/api/support/messages/${id}/status`, null, {
+                params: { status }
+            });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 export default SupportApi;

@@ -14,7 +14,10 @@ import ru.flamexander.spring.security.jwt.exceptions.ResourceNotFoundException;
 import ru.flamexander.spring.security.jwt.exceptions.RoomAlreadyBookedException;
 import ru.flamexander.spring.security.jwt.repositories.BookingRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -48,29 +51,35 @@ public class BookingService {
         User user = userService.findById(bookingDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
 
-        Optional<Room> roomOptional = roomService.getRoomById(bookingDto.getRoomId());
-        Room room = roomOptional.orElseThrow(() -> new ResourceNotFoundException("Комната не найдена"));
+        Room room = null;
+        if (bookingDto.getRoomId() != null) {
+            room = roomService.getRoomById(bookingDto.getRoomId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Комната не найдена"));
+            if (bookingDto.getCheckInDate().isBefore(LocalDate.now())) {
+                throw new IllegalArgumentException("Дата заезда не может быть в прошлом");
+            }
+            if (bookingDto.getCheckOutDate().isBefore(bookingDto.getCheckInDate())) {
+                throw new IllegalArgumentException("Дата выезда не может быть раньше даты заезда");
+            }
+            if (isRoomBooked(room.getRoomId(), bookingDto.getCheckInDate(), bookingDto.getCheckOutDate())) {
+                throw new RoomAlreadyBookedException("Комната уже забронирована на указанные даты");
+            }
+        }
 
-        if (bookingDto.getCheckInDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Дата заезда не может быть в прошлом");
-        }
-        if (bookingDto.getCheckOutDate().isBefore(bookingDto.getCheckInDate())) {
-            throw new IllegalArgumentException("Дата выезда не может быть раньше даты заезда");
-        }
-        if (isRoomBooked(room.getRoomId(), bookingDto.getCheckInDate(), bookingDto.getCheckOutDate())) {
-            throw new RoomAlreadyBookedException("Комната уже забронирована на указанные даты");
-        }
-
-        Services service = null;
-        if (bookingDto.getServiceId() != null) {
-            ServiceDto serviceDto = serviceService.findById(bookingDto.getServiceId());
-            service = modelMapper.map(serviceDto, Services.class);
+        List<Services> services = new ArrayList<>();
+        if (bookingDto.getServiceIds() != null) {
+            for (Long serviceId : bookingDto.getServiceIds()) {
+                ServiceDto serviceDto = serviceService.findById(serviceId);
+                Services service = modelMapper.map(serviceDto, Services.class);
+                services.add(service);
+            }
         }
 
         booking.setUser(user);
         booking.setRoom(room);
-        booking.setService(service);
+        booking.setServices(services);
         booking.setStatus("PENDING");
+        booking.setTotalSum(calculateTotalSum(booking));
 
         Booking savedBooking = bookingRepository.save(booking);
         return savedBooking;
@@ -98,18 +107,23 @@ public class BookingService {
         User user = userService.findById(booking.getUser().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
 
-        Optional<Room> roomOptional = roomService.getRoomById(booking.getRoom().getRoomId());
-        Room room = roomOptional.orElseThrow(() -> new ResourceNotFoundException("Комната не найдена"));
+        Room room = null;
+        if (booking.getRoom() != null) {
+            room = roomService.getRoomById(booking.getRoom().getRoomId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Комната не найдена"));
+        }
 
-        Services service = null;
-        if (booking.getService() != null) {
-            ServiceDto serviceDto = serviceService.findById(booking.getService().getServiceId());
-            service = modelMapper.map(serviceDto, Services.class);
+        List<Services> services = new ArrayList<>();
+        if (booking.getServices() != null) {
+            for (Services service : booking.getServices()) {
+                ServiceDto serviceDto = serviceService.findById(service.getServiceId());
+                services.add(modelMapper.map(serviceDto, Services.class));
+            }
         }
 
         booking.setUser(user);
         booking.setRoom(room);
-        booking.setService(service);
+        booking.setServices(services);
 
         return bookingRepository.save(booking);
     }
@@ -144,5 +158,19 @@ public class BookingService {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Бронирование не найдено"));
         bookingRepository.delete(booking);
+    }
+
+    private BigDecimal calculateTotalSum(Booking booking) {
+        BigDecimal total = BigDecimal.ZERO;
+        if (booking.getRoom() != null) {
+            long days = ChronoUnit.DAYS.between(booking.getCheckInDate(), booking.getCheckOutDate());
+            total = total.add(BigDecimal.valueOf(booking.getRoom().getPrice()).multiply(BigDecimal.valueOf(days)));
+        }
+        if (booking.getServices() != null) {
+            for (Services service : booking.getServices()) {
+                total = total.add(BigDecimal.valueOf(service.getServicePrice()));
+            }
+        }
+        return total;
     }
 }

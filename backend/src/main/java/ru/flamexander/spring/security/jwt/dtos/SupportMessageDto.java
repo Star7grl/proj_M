@@ -9,13 +9,15 @@ public class SupportMessageDto {
     private String messageText;
     private String username;
     private LocalDateTime createdAt;
+    private String status;
 
     public SupportMessageDto() {}
 
-    public SupportMessageDto(Long id, String messageText, String username, LocalDateTime createdAt) {
+    public SupportMessageDto(Long id, String messageText, String username, LocalDateTime createdAt, String status) {
         this.id = id;
         this.messageText = messageText;
         this.username = username;
         this.createdAt = createdAt;
+        this.status = status;
     }
 }

@@ -22,6 +22,16 @@ const SupportMessagesManagementPage = () => {
         fetchMessages();
     }, []);
 
+    const handleStatusChange = async (id, newStatus) => {
+        try {
+            await SupportApi.updateMessageStatus(id, newStatus);
+            setMessages(messages.map(msg => msg.id === id ? { ...msg, status: newStatus } : msg));
+        } catch (error) {
+            console.error('Ошибка обновления статуса:', error);
+            setError('Не удалось обновить статус');
+        }
+    };
+
     if (loading) return <div>Загрузка...</div>;
     if (error) return <div>{error}</div>;
 
@@ -33,6 +43,17 @@ const SupportMessagesManagementPage = () => {
                     {messages.map((message) => (
                         <li key={message.id}>
                             <strong>{message.username}</strong> ({new Date(message.createdAt).toLocaleString()}): {message.messageText}
+                            <div>
+                                <label>Статус: </label>
+                                <select
+                                    value={message.status}
+                                    onChange={(e) => handleStatusChange(message.id, e.target.value)}
+                                >
+                                    <option value="Не назначен">Не назначен</option>
+                                    <option value="На рассмотрении">На рассмотрении</option>
+                                    <option value="Решён">Решён</option>
+                                </select>
+                            </div>
                         </li>
                     ))}
                 </ul>
