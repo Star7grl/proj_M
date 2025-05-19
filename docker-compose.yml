@@ -1,0 +1,39 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: localPostgresSQLDB2
+    image: postgres
+    environment:
+      POSTGRES_DB: "local_db2"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "12345"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/local_db2
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 12345
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - "5174:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

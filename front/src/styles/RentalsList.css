@@ -1,0 +1,184 @@
+/* Контейнер страницы */
+.rentals-list-page {
+  max-width: 900px;
+  margin: 60px auto 10vh;
+  padding: 20px 30px 40px;
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(118, 59, 167, 0.15);
+  font-family: 'Montserrat', sans-serif;
+  color: #333;
+}
+
+.rooms-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.rooms-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Заголовок */
+.rentals-list-page h3 {
+  text-align: center;
+  font-size: 2rem;
+  color: #642f8f;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.rentals-list-page h2 {
+  text-align: center;
+  font-size: 1rem;
+  margin: 10px auto;
+  text-transform: uppercase;
+}
+
+/* Список аренд */
+.rentals-list-page ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rental-info > div {
+  margin-bottom: 2px;
+  font-size: 1rem;
+}
+
+.rental-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.rentals-list-page li {
+  background-color: white;
+  border-radius: 12px;
+  padding: 18px 40px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+}
+
+/* Сообщение при отсутствии аренд */
+.rentals-list-page p {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #777;
+  margin-top: 40px;
+}
+
+/* Форма редактирования */
+.rental-edit-form {
+  margin-top: 30px;
+  background-color: white;
+  padding: 30px 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(118, 59, 167, 0.15);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.rental-edit-form form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.rental-edit-form input[type="text"],
+.rental-edit-form input[type="date"] {
+  flex: 1 1 48%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  border: 1.8px solid #b0a8b9;
+  border-radius: 50px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.rental-edit-form input[type="text"]:focus,
+.rental-edit-form input[type="date"]:focus {
+  outline: none;
+  border-color: #763ba7d9;
+  box-shadow: 0 0 8px rgba(118, 59, 167, 0.4);
+}
+
+/* Кнопки формы */
+.rental-edit-form button {
+  flex: 1 1 45%;
+  padding: 14px 0;
+  font-size: 1.1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0 15px rgba(118, 59, 167, 0.9);
+}
+
+.rental-edit-form button[type="submit"] {
+  background-color: #763ba7db;
+  color: white;
+    box-shadow: none;
+}
+
+.rental-edit-form button[type="submit"]:hover {
+   background-color: #642f8f;
+}
+
+.rental-edit-form button[type="button"] {
+  background-color: #ffffffdb;
+  color: #555;
+}
+
+.rental-edit-form button[type="button"]:hover {
+  background-color: #763ba7db;
+  color: white;
+}
+
+ /*редактирование*/
+.edit-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  border: 1.8px solid #b0a8b9;
+  border-radius: 50px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #763ba7d9;
+  box-shadow: 0 0 8px rgba(118, 59, 167, 0.4);
+}
+
+
+/* Адаптивность */
+@media (max-width: 600px) {
+  .rental-edit-form form {
+    flex-direction: column;
+  }
+
+  .rental-edit-form input[type="text"],
+  .rental-edit-form input[type="date"],
+  .rental-edit-form button {
+    flex: 1 1 100%;
+  }
+}
