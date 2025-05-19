@@ -488,3 +488,5 @@ VALUES (
 
 
 ALTER TABLE support_messages ADD COLUMN status VARCHAR(255) NOT NULL DEFAULT 'Не назначен';
+
+ALTER TABLE services ADD COLUMN description TEXT;

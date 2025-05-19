@@ -66,7 +66,7 @@ public class RentalController {
         if (rental.getServiceIds() != null) {
             List<Services> services = rental.getServiceIds().stream()
                     .map(id -> serviceService.findById(id))
-                    .map(dto -> new Services(dto.getServiceId(), dto.getServiceName(), dto.getServicePrice(), dto.getImageUrl()))
+                    .map(dto -> new Services(dto.getServiceId(), dto.getServiceName(), dto.getServicePrice(), dto.getImageUrl(), dto.getDescription()))
                     .collect(Collectors.toList());
             rental.setServices(services);
         }

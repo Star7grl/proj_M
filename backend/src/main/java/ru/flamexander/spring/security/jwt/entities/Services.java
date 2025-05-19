@@ -18,4 +18,5 @@ public class Services {
     private String serviceName;
     private Double servicePrice;
     private String imageUrl;
+    private String description; // Добавлено поле description
 }

@@ -19,7 +19,7 @@
     flex-wrap: wrap; /* Перенос на маленьких экранах */
   }
 
-  .button, .book-button, .send-button, .pay-button  {
+  .button, .book-button, .send-button, .pay-button,   .booking-table button, .users-management-page button, .admin-button, .admin-button-delete, .rentals-list-page li button  {
     background: none;
     border: 0.5px solid #ffffff;
     color: white;
@@ -36,14 +36,16 @@
     color: black;
   }
   
-  .book-button, .reg-button, .send-button, .pay-button {
+  .book-button, .reg-button, .send-button, .pay-button,   .booking-table button, .users-management-page button, .admin-button, .rentals-list-page li button  {
     background-color: #763ba7db;
     border: none;
   }
   
-  .book-button:hover, .reg-button:hover, .send-button:hover,.pay-button {
+  .book-button:hover, .reg-button:hover, .send-button:hover,.pay-button:hover,   .booking-table button:hover, .users-management-page button:hover, .admin-button:hover, .rentals-list-page li button:hover  {
     background: #642f8f;
     color: white;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
   }
 
 

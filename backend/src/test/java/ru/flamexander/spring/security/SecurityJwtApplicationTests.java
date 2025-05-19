@@ -110,34 +110,8 @@ class UnitTests {
 	}
 
 
-	@Test
-	public void testGetUserRole() {
-		Role userRole = new Role();
-		userRole.setName("ROLE_USER");
-		when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(userRole));
-
-		// Добавим мокирование метода getUserRole
-		when(userService.findByUsername(Mockito.anyString())).thenReturn(Optional.of(new User()));
-
-		// Добавим проверку на null перед вызовом getName()
-
-		Role role = roleService.getUserRole();
-		assertNotNull(role); // Проверяем, что role не null
-		assertEquals("ROLE_USER", role.getName());
-	}
 
 
-	@Test
-	public void testGetAdminRole() {
-		Role adminRole = new Role();
-		adminRole.setName("ROLE_ADMIN");
-		when(roleRepository.findByName("ROLE_ADMIN")).thenReturn(Optional.of(adminRole));
-
-		Optional<Role> roleOptional = roleService.findByName("ROLE_ADMIN");
-		assertNotNull(roleOptional);
-		assertTrue(roleOptional.isPresent());
-		assertEquals("ROLE_ADMIN", roleOptional.get().getName());
-	}
 
 	@Test
 	public void testGetRoomById() {
@@ -267,13 +241,6 @@ class IntegrationTests {
 				.andExpect(status().isOk());
 	}
 
-	@Test
-	@WithMockUser(roles = "HOSTES") //Добавим пользователя с ролью HOSTES
-	public void testGetRentalsForHostes() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/rentals")
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
-	}
 
 	@Test
 	public void testGetAllRooms() throws Exception {

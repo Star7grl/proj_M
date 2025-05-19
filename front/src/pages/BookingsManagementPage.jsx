@@ -1,6 +1,6 @@
 import React from 'react';
 import BookingTable from '../components/BookingTable';
-import '../styles/BookingTable.css'; // Используем тот же CSS
+import '../styles/BookingTable.css'; 
 
 const BookingsManagementPage = () => {
     return (

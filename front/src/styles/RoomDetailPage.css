@@ -100,9 +100,7 @@
   font-size: 1.1rem;
 }
 
-.date-picker {
-  margin-bottom: 20px;
-}
+
 
 .date-picker label {
   display: block;
@@ -133,26 +131,6 @@
   box-shadow: 0 0 0 2px rgba(121, 11, 184, 0.2);
 }
 
-.book-button {
-  background-color: #790BB8;
-  color: white;
-  padding: 0.8rem 2rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(121, 11, 184, 0.3);
-  margin-top: 20px;
-}
-
-.book-button:hover {
-  background-color: #5d0890;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(121, 11, 184, 0.4);
-}
-
 .services-slider {
   width: 100%;
   margin-top: 40px;
@@ -165,7 +143,7 @@
   color: #2c3e50;
 }
 
-.service-card {
+.service-card-rooms {
   background-color: #fff;
   border-radius: 10px;
   padding: 15px;
@@ -176,7 +154,7 @@
   margin: 0 10px;
 }
 
-.service-card img {
+.service-card-rooms img {
   width: 100%;
   height: 150px;
   object-fit: cover;
@@ -184,40 +162,32 @@
   margin-bottom: 10px;
 }
 
-.service-card h4 {
+.service-card-rooms h4 {
   font-size: 1.2rem;
   margin-bottom: 5px;
   color: #2c3e50;
 }
 
-.service-card p {
+.service-card-rooms p {
   font-size: 1rem;
   color: #763ba7db;
   font-weight: 600;
 }
 
-.service-card.selected {
+.service-card-rooms.selected {
   border: 2px solid #790BB8;
   box-shadow: 0 4px 15px rgba(121, 11, 184, 0.4);
 }
 
-.service-card:hover {
+.service-card-rooms:hover {
   transform: translateY(-5px);
 }
 
-.slick-slide {
+.room-detail .slick-slide {
   padding: 10px;
 }
 
-.slick-dots li button:before {
-  color: #790BB8;
-}
-
-.slick-prev, .slick-next {
-  color: #790BB8;
-  font-size: 24px;
-}
-
+/*календарь*/
 .past-date {
   background-color: #ccc !important;
   color: #666 !important;
@@ -229,6 +199,9 @@
   color: white !important;
   cursor: not-allowed;
 }
+
+
+
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
@@ -243,6 +216,10 @@
 
   .active-image {
     height: 400px;
+  }
+
+  .admin-button {
+    width: 100%; /* Кнопки должны занимать всю доступную ширину */
   }
 }
 
@@ -283,8 +260,21 @@
     margin-top: 30px;
   }
 
-  .service-card img {
+  .service-card-rooms img {
     height: 120px;
+  }
+
+  .date-picker {
+    margin-bottom: 15px;
+  }
+
+  .date-picker label {
+    font-size: 1rem;
+    margin-bottom: 0rem;
+  }
+
+  .react-datepicker__input-container input {
+    width: 100%;
   }
 }
 
@@ -310,7 +300,8 @@
     height: 80px;
   }
 
-  .service-card img {
+  .service-card-rooms img {
     height: 100px;
   }
 }
+

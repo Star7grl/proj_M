@@ -58,11 +58,18 @@ const RoomsApi = {
       throw error;
     }
   },
-  searchRoomsByTitle: async (title) => {
+  searchRooms: async (roomTitle = '', minPrice = 0, maxPrice = 100000, page = 1, size = 9) => {
     try {
-      const response = await apiClient.get('/api/rooms/searchTitle', {
-        params: { title }
-      });
+      const params = {
+        minPrice,
+        maxPrice,
+        page,
+        size,
+      };
+      if (roomTitle) {
+        params.roomTitle = roomTitle;
+      }
+      const response = await apiClient.get('/api/rooms/search', { params });
       return response.data;
     } catch (error) {
       throw error;

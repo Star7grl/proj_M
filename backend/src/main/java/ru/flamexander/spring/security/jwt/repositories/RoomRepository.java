@@ -16,11 +16,15 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     // Поиск комнат по частичному совпадению названия (без учета регистра)
     List<Room> findByRoomTitleContainingIgnoreCase(String roomTitle);
 
-    // Поиск комнат по названию и диапазону цен
-    List<Room> findByRoomTitleContainingAndPriceBetween(String roomTitle, double minPrice, double maxPrice);
+    Page<Room> findByPriceBetween(double minPrice,
+                                  double maxPrice,
+                                  Pageable pageable);
 
-    // Поиск комнат только по диапазону цен
-    List<Room> findByPriceBetween(double minPrice, double maxPrice);
+    Page<Room> findByRoomTitleContainingAndPriceBetween(
+            String roomTitle,
+            double minPrice,
+            double maxPrice,
+            Pageable pageable);
 
     // Поиск комнат с определенным статусом (например, "AVAILABLE") с пагинацией
     //Page<Room> findByStatusNot(String status, Pageable pageable);

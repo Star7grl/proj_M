@@ -93,30 +93,31 @@ const UsersManagementPage = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {users.map(user => (
-                    <tr key={user.id}>
-                        <td>{user.id}</td>
-                        <td>{user.username}</td>
-                        <td>{user.email}</td>
-                        <td>{user.role ? user.role.name : 'Нет роли'}</td>
-                        <td>{user.firstName || 'Не указано'}</td>
-                        <td>{user.lastName || 'Не указано'}</td>
-                        <td>
-                            {editingUser === user.id ? (
-                                <>
-                                    <button onClick={handleSaveUser}>Сохранить</button>
-                                    <button onClick={handleCancelEdit}>Отмена</button>
-                                </>
-                            ) : (
-                                <>
-                                    <button onClick={() => handleEditUser(user)}>Редактировать</button>
-                                    <button onClick={() => handleDeleteUser(user.id)}>Удалить</button>
-                                </>
-                            )}
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
+  {users.map(user => (
+    <tr key={user.id}>
+      <td data-label="ID">{user.id}</td>
+      <td data-label="Имя пользователя">{user.username}</td>
+      <td data-label="Email">{user.email}</td>
+      <td data-label="Роль">{user.role ? user.role.name : 'Нет роли'}</td>
+      <td data-label="Имя">{user.firstName || 'Не указано'}</td>
+      <td data-label="Фамилия">{user.lastName || 'Не указано'}</td>
+      <td data-label="Действия">
+        {editingUser === user.id ? (
+          <>
+            <button onClick={handleSaveUser}>Сохранить</button>
+            <button onClick={handleCancelEdit}>Отмена</button>
+          </>
+        ) : (
+          <>
+            <button onClick={() => handleEditUser(user)}>Редактировать</button>
+            <button onClick={() => handleDeleteUser(user.id)}>Удалить</button>
+          </>
+        )}
+      </td>
+    </tr>
+  ))}
+</tbody>
+
             </table>
 
             {editingUser && (

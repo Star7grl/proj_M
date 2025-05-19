@@ -157,16 +157,4 @@
   color: rgba(148, 148, 148, 0.68);
 }
 
-.mobile-menu-content ul li button {
-  background-color: #763ba7db;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
 
-.mobile-menu-content ul li button:hover {
-  background-color: #642f8f;
-}

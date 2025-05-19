@@ -6,7 +6,7 @@
   position: relative;
   min-height: 70vh;
 }
-.rental {
+.admin-panel-page .rental {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
@@ -107,22 +107,6 @@ gap: 50px;
 
 
 /* Кнопки */
-.admin-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 30px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-weight: 500;
-  background: #763ba7db;
-}
-.admin-button-primary:hover{
-  background: white;
-  border: 2px solid #763ba7db;
-  color: #763ba7db;
-}
-
 .admin-button-save {
   background-color: #14994be9;
   color: white;
@@ -138,6 +122,9 @@ gap: 50px;
   background: #ffffff;
   color: #14994be9;
 }
+.admin-button-cancel:hover{
+  background: #14994be9;
+}
 
 .admin-button-cancel:hover {
 transform: scale(1.05);
@@ -145,32 +132,25 @@ transform: scale(1.05);
 
 .panel-btn{
   color: white;
-  padding: 15px 30px;
+  padding: 20px 50px;
+  border-radius: 50px;
 }
 
 
-.admin-button-edit {
+.admin-button-edit, .admin-button-add-image {
   border: 1px solid #763ba7db;
   background-color: #ffffff;
   color: #642f8f;
 }
 
-.admin-button-edit:hover {
+.admin-button-edit:hover, .admin-button-add-image:hover {
   background-color: #763ba7db;
   color: #ffffff;
   transition: all 0.3s ease;
 }
-
-.admin-button-delete {
-  background-color: #e74c3c;
-  color: white;
-  margin-left: 10px;
+.admin-button-delete-image {
+  margin-left: 20px;
 }
-
-.admin-button-delete:hover {
-  background-color: #a93326;
-}
-
 .admin-form-actions {
   display: flex;
   gap: 10px;
@@ -220,6 +200,14 @@ transform: scale(1.05);
 
 /* Адаптивность */
 @media (max-width: 768px) {
+  .admin-panel-page{
+    padding: 0px 50px 70px;
+  }
+  .admin-controls{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
   .admin-form {
     flex-direction: column;
     align-items: stretch;
@@ -237,7 +225,7 @@ transform: scale(1.05);
   }
   
   .admin-button {
-    padding: 8px 12px;
+    padding: 20px 1px;
     font-size: 14px;
   }
 }

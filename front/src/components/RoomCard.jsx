@@ -14,13 +14,13 @@ const RoomCard = ({ room }) => {
         <p>{room.description}</p>
         <h3>Цена: {room.price} руб.</h3>
         {room.status === 'FREE' && (
-          <button>
-            <Link to={`/booking/${room.roomId}`}>Забронировать</Link>
-          </button>
-        )}
-        {room.status === 'BOOKED' && (
-          <button disabled>Забронировано</button>
-        )}
+  <button type="button"> 
+    <Link to={`/booking/${room.roomId}`}>Забронировать</Link>
+  </button>
+)}
+{room.status === 'BOOKED' && (
+  <button type="button" disabled>Забронировано</button>
+)}
       </div>
     </div>
   );

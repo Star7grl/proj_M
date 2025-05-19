@@ -20,13 +20,17 @@ import BookingsManagementPage from './pages/BookingsManagementPage';
 import PaymentPage from './pages/PaymentPage';
 import ContactsPage from './pages/ContactsPage';
 import SupportMessagesManagementPage from './pages/SupportMessagesManagementPage';
-import ServicesPurchasePage from './pages/ServicesPurchasePage'; // Новый импорт
+import ServicesPurchasePage from './pages/ServicesPurchasePage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import RentalsListPage from './pages/RentalsListPage.jsx';
 import useUserStore from './store/UserStore';
 import apiClient from './config/apiClient.js';
+import StatisticsPage from './pages/StatisticsPage'; 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 
 const App = () => {
     const { setUser } = useUserStore();
@@ -70,12 +74,13 @@ const App = () => {
                 <Route path="/admin/services" element={<ProtectedRoute role="ADMIN"><ServicesManagementPage /></ProtectedRoute>} />
                 <Route path="/admin/rooms" element={<ProtectedRoute role="ADMIN"><RoomsManagementPage /></ProtectedRoute>} />
                 <Route path="/admin/support-messages" element={<ProtectedRoute role="ADMIN"><SupportMessagesManagementPage /></ProtectedRoute>} />
+                <Route path="/admin/statistics" element={<ProtectedRoute role="ADMIN"><StatisticsPage /></ProtectedRoute>} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
                 <Route path="/hostes/rooms" element={<ProtectedRoute role="HOSTES"><RoomSelectionPage /></ProtectedRoute>} />
                 <Route path="/hostes/rentals/new" element={<ProtectedRoute role="HOSTES"><RentalFormPage /></ProtectedRoute>} />
-                <Route path="/services/purchase" element={<ProtectedRoute><ServicesPurchasePage /></ProtectedRoute>} /> {/* Новый маршрут */}
+                <Route path="/services/purchase" element={<ProtectedRoute><ServicesPurchasePage /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
             <Footer />

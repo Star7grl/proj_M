@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ServicesApi from "../config/servicesApi";
 import "../styles/Services.css";
-import hotelBackground from "../assets/images/номера.png"; // Импортируем фоновое изображение
+import hotelBackground from "../assets/images/номера.png";
 
 const ServicesPage = () => {
     const [services, setServices] = useState([]);
@@ -30,7 +30,6 @@ const ServicesPage = () => {
 
     return (
         <div className="services-page-wrapper">
-            {/* Фоновое изображение с затемнением */}
             <div className="services-background">
                 <img src={hotelBackground} alt="Фон отеля" />
                 <div className="background-overlay"></div>
@@ -57,14 +56,11 @@ const ServicesPage = () => {
                                     </div>
                                     <h3>{service.serviceName}</h3>
                                     <p className="service-description">
-                                        {generateDescription(service.serviceName)}
+                                        {service.description || "Описание отсутствует"}
                                     </p>
                                     <div className="service-price">
                                         {service.servicePrice} ₽
                                     </div>
-                                    <button className="service-button">
-                                        Подробнее
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -75,7 +71,6 @@ const ServicesPage = () => {
     );
 };
 
-// Генерация иконок в зависимости от типа услуги
 const getServiceIcon = (serviceName) => {
     const icons = {
         "SPA": "💆‍♀️",
@@ -86,19 +81,6 @@ const getServiceIcon = (serviceName) => {
         "Бассейн": "🏊"
     };
     return icons[serviceName] || "✨";
-};
-
-// Генерация описания
-const generateDescription = (serviceName) => {
-    const descriptions = {
-        "SPA": "Расслабляющие процедуры с использованием натуральных материалов",
-        "Ресторан": "Гастрономические шедевры от нашего шеф-повара",
-        "Трансфер": "Комфортабельные автомобили с профессиональными водителями",
-        "Экскурсия": "Уникальные маршруты по местным достопримечательностям",
-        "Фитнес": "Современное оборудование и персональные тренировки",
-        "Бассейн": "Огромный бассейн с подогревом и видом на море"
-    };
-    return descriptions[serviceName] || "Премиум сервис для наших гостей";
 };
 
 export default ServicesPage;

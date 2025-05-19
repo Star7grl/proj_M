@@ -81,20 +81,18 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/searchTitle")
-    public ResponseEntity<List<Room>> searchRooms(@RequestParam(required = false) String title) {
-        if (title != null && !title.isEmpty()) {
-            return ResponseEntity.ok(roomService.searchByTitle(title));
-        }
-        return ResponseEntity.ok(roomService.getAllRooms());
-    }
-
-    @GetMapping("/searchPrice")
-    public ResponseEntity<List<Room>> searchRooms(
+    @GetMapping("/search")
+    public ResponseEntity<Page<Room>> searchRooms(
             @RequestParam(required = false) String roomTitle,
-            @RequestParam(required = false, defaultValue = "0") double minPrice,
-            @RequestParam(required = false, defaultValue = "100000") double maxPrice) {
-        return ResponseEntity.ok(roomService.searchRooms(roomTitle, minPrice, maxPrice));
+            @RequestParam(name = "minPrice", defaultValue = "0") double minPrice,
+            @RequestParam(name = "maxPrice", defaultValue = "1000000") double maxPrice,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "9") int size
+    ) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return ResponseEntity.ok(
+                roomService.searchRooms(roomTitle, minPrice, maxPrice, pageable)
+        );
     }
 
     @GetMapping("/available")

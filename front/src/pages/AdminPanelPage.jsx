@@ -13,7 +13,7 @@ const AdminPanelPage = () => {
             <div className="admin-controls">
                 <Link to="/admin/services" className="admin-link">
                     <button className="admin-button panel-btn">
-                        <span>Управление сервисами</span>
+                        <span>Управление услугами</span>
                     </button>
                 </Link>
 
@@ -37,6 +37,12 @@ const AdminPanelPage = () => {
                 <Link to="/admin/support-messages" className="admin-link">
                     <button className="admin-button panel-btn">
                         <span>Сообщения от пользователей</span>
+                    </button>
+                </Link>
+                {/* НОВАЯ КНОПКА ДЛЯ СТАТИСТИКИ */}
+                <Link to="/admin/statistics" className="admin-link">
+                    <button className="admin-button panel-btn">
+                        <span>Статистика отеля</span> {/* <<<--- ДОБАВИТЬ ЭТУ КНОПКУ */}
                     </button>
                 </Link>
             </div>

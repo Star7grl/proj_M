@@ -8,12 +8,13 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
     <div className="pagination">
       {pages.map((page) => (
         <button
-          key={page}
-          onClick={() => onPageChange(page)}
-          className={page === currentPage ? 'active' : ''}
-        >
-          {page}
-        </button>
+        key={page}
+        type="button"  // Добавлено
+        onClick={() => onPageChange(page)}
+        className={page === currentPage ? 'active' : ''}
+      >
+        {page}
+      </button>
       ))}
     </div>
   );

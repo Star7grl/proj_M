@@ -95,11 +95,15 @@ public class RoomService {
         return roomRepository.findByRoomTitleContainingIgnoreCase(roomTitle);
     }
 
-    public List<Room> searchRooms(String roomTitle, double minPrice, double maxPrice) {
+    public Page<Room> searchRooms(String roomTitle,
+                                  double minPrice,
+                                  double maxPrice,
+                                  Pageable pageable) {
         if (roomTitle != null && !roomTitle.isEmpty()) {
-            return roomRepository.findByRoomTitleContainingAndPriceBetween(roomTitle, minPrice, maxPrice);
+            return roomRepository.findByRoomTitleContainingAndPriceBetween(
+                    roomTitle, minPrice, maxPrice, pageable);
         } else {
-            return roomRepository.findByPriceBetween(minPrice, maxPrice);
+            return roomRepository.findByPriceBetween(minPrice, maxPrice, pageable);
         }
     }
 

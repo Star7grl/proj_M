@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod; // <-- Добавлен импорт
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -51,25 +52,35 @@ public class SecurityConfig {
                 .antMatchers("/public/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/services/**").permitAll()
-                .antMatchers("/api/service-orders/**").authenticated()
-                .antMatchers("/api/users").hasRole("ADMIN")
-                .antMatchers("/api/rooms/admin").permitAll()
-                .antMatchers("/api/rooms/**").permitAll()
-                .antMatchers("/api/bookings/**").permitAll()
+                // .antMatchers("/api/service-orders/**").authenticated() // Закомментировано, если не используется
+                .antMatchers("/api/users").hasRole("ADMIN") // Пример, если есть такой эндпоинт
+                .antMatchers("/api/rooms/admin").permitAll() // Или hasRole("ADMIN") в зависимости от логики
+                .antMatchers("/api/rooms/**").permitAll() // Для GET запросов к комнатам
+
+                // Правила для Bookings
+                .antMatchers("/api/bookings/add").authenticated()
+                .antMatchers("/api/bookings/user/{userId}").authenticated()
+                .antMatchers("/api/bookings/user/delete/{bookingId}").authenticated() // <<< НОВОЕ ПРАВИЛО
+                .antMatchers("/api/bookings/{roomId}/booked-dates").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/bookings").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/api/bookings/updateStatus/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/api/bookings/delete/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/api/bookings/update/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/bookings/{id}").authenticated() // Просмотр деталей бронирования
+
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/private/**").authenticated()
                 .antMatchers("/api/auth/me").authenticated()
                 .antMatchers("/uploads/**").permitAll()
                 .antMatchers("/api/users/profile/**").authenticated()
-                .antMatchers("/api/bookings/user/**").authenticated()
-                .antMatchers("/api/bookings/add").authenticated()
-                .antMatchers("/api/rooms/add").hasRole("ADMIN")
+                // .antMatchers("/api/bookings/user/**").authenticated() // Уже покрыто более специфичным правилом выше
+                // .antMatchers("/api/rooms/add").hasRole("ADMIN") // Уже покрыто /api/admin/** или отдельным правилом, если нужно
                 .antMatchers("/api/rentals/**").hasAnyRole("HOSTES", "ADMIN")
-                .antMatchers("/api/users/**").authenticated()
+                .antMatchers("/api/users/**").authenticated() // Осторожно, может быть слишком общим
                 .antMatchers("/api/support/send").authenticated()
                 .antMatchers("/api/support/messages").hasRole("ADMIN")
                 .antMatchers("/api/support/messages/**").hasRole("ADMIN")
-                .anyRequest().denyAll()
+                .anyRequest().denyAll() // Изменено с permitAll() на denyAll() для безопасности по умолчанию
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

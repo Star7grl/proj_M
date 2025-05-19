@@ -3,9 +3,8 @@
 .booking-table-container {
     margin: 20px;
     padding: 20px;
-    background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: 70px;
 }
 
 .booking-table-header {
@@ -29,7 +28,7 @@
 }
 
 .booking-table th {
-    background-color: #4CAF50;
+    background-color: #642f8f;
     color: white;
     font-weight: bold;
 }
@@ -37,7 +36,7 @@
 .booking-table tr:hover {
     background-color: #f1f1f1;
 }
-
+box-shadow: 0 0px 15px rgba(155, 89, 182, 0.6);
 .booking-table select {
     padding: 8px;
     border-radius: 4px;
@@ -48,7 +47,7 @@
 
 .booking-table select:focus {
     outline: none;
-    border-color: #4CAF50;
+    border-color: #642f8f;
 }
 
 .loading {
@@ -56,3 +55,87 @@
     font-size: 18px;
     color: #666;
 }
+
+/* Select для статуса */
+.booking-table select {
+    padding: 6px 12px;
+    border-radius: 50px;
+    border: none;
+    box-shadow: 0 0px 15px rgba(155, 89, 182, 0.6);
+    font-size: 0.9rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px;
+  }
+  
+  .booking-table select:hover,
+  .booking-table select:focus {
+    box-shadow: 0 3px 15px rgba(155, 89, 182, 0.9);
+    outline: none;
+    transform: translateY(-2px);
+  }
+  
+  /* Кнопка удаления */
+  .booking-table button {
+    padding: 7px 15px;
+    margin-top: 10px;
+    margin-left: 20px;
+  }
+  
+
+/* Адаптивность для BookingTable */
+
+@media (max-width: 768px) {
+    .booking-table {
+      border: 0;
+    }
+  
+    /* Скрываем заголовок таблицы */
+    .booking-table thead {
+      display: none;
+    }
+  
+    /* Каждая строка становится блочным элементом */
+    .booking-table tbody tr {
+      display: block;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      padding: 12px 20px;
+      background-color: #fff;
+    }
+  
+    /* Каждая ячейка - строка с подписью */
+    .booking-table tbody td {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: none;
+      font-size: 14px;
+      color: #333;
+    }
+  
+    /* Добавляем подписи к ячейкам через data-label */
+    .booking-table tbody td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #642f8f;
+      flex-basis: 45%;
+      text-transform: uppercase;
+    }
+  
+    /* Последняя ячейка (действия) выравнивается слева */
+    .booking-table tbody td:last-child {
+      justify-content: flex-start;
+      gap: 10px;
+    }
+  
+    /* Селекты и кнопки подгоняем под ширину */
+    .booking-table select {
+      min-width: 120px;
+      font-size: 14px;
+    }
+  }
+  

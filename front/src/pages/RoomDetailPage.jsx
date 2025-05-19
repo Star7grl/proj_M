@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import RoomsApi from '../config/RoomsApi';
 import ServicesApi from '../config/servicesApi';
 import useUserStore from '../store/UserStore';
@@ -12,16 +12,38 @@ import 'react-datepicker/dist/react-datepicker.css';
 import apiClient from '../config/apiClient';
 import hotelBackground from "../assets/images/номера.png";
 
+const formatDateToYYYYMMDD = (date) => {
+  if (!date) return '';
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const parseDateFromUrlString = (dateString) => {
+  if (!dateString || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return null;
+  const parts = dateString.split('-');
+  return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+};
+
 const RoomDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useUserStore();
+
   const [room, setRoom] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
-  const [checkInDate, setCheckInDate] = useState(null);
-  const [checkOutDate, setCheckOutDate] = useState(null);
+
+  const queryParams = new URLSearchParams(location.search);
+  const initialCheckInDate = parseDateFromUrlString(queryParams.get('checkIn'));
+  const initialCheckOutDate = parseDateFromUrlString(queryParams.get('checkOut'));
+
+  const [checkInDate, setCheckInDate] = useState(initialCheckInDate);
+  const [checkOutDate, setCheckOutDate] = useState(initialCheckOutDate);
+
   const [services, setServices] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
-  const { user } = useUserStore();
-  const navigate = useNavigate();
   const [bookedDates, setBookedDates] = useState([]);
   const [pastDates, setPastDates] = useState([]);
 
@@ -50,8 +72,8 @@ const RoomDetailPage = () => {
     const fetchBookedDates = async () => {
       try {
         const response = await apiClient.get(`/api/bookings/${id}/booked-dates`);
-        setBookedDates(response.data.booked.map(date => new Date(date)));
-        setPastDates(response.data.past.map(date => new Date(date)));
+        setBookedDates(response.data.booked.map(dateStr => parseDateFromUrlString(dateStr.split('T')[0])));
+        setPastDates(response.data.past.map(dateStr => parseDateFromUrlString(dateStr.split('T')[0])));
       } catch (error) {
         console.error('Ошибка загрузки занятых дат:', error);
       }
@@ -63,11 +85,15 @@ const RoomDetailPage = () => {
   }, [id]);
 
   const isDateBooked = (date) => {
-    return bookedDates.some(bookedDate => bookedDate.toDateString() === date.toDateString());
+    if (!date) return false;
+    return bookedDates.some(bookedDate => bookedDate && bookedDate.getTime() === date.getTime());
   };
 
   const isDatePast = (date) => {
-    return pastDates.some(pastDate => pastDate.toDateString() === date.toDateString());
+    if (!date) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return pastDates.some(pastDate => pastDate && pastDate.getTime() === date.getTime()) || date < today;
   };
 
   const handleSelectService = (serviceId) => {
@@ -83,25 +109,37 @@ const RoomDetailPage = () => {
       alert('Пожалуйста, выберите даты заезда и выезда.');
       return;
     }
+    if (checkOutDate <= checkInDate) {
+      alert('Дата выезда должна быть позже даты заезда.');
+      return;
+    }
 
-    // Проверка, попадают ли выбранные даты в занятые
     const selectedDates = [];
-    let currentDate = new Date(checkInDate);
-    while (currentDate <= checkOutDate) {
-      selectedDates.push(new Date(currentDate));
-      currentDate.setDate(currentDate.getDate() + 1);
+    let currentDateLoop = new Date(checkInDate);
+    while (currentDateLoop < checkOutDate) {
+      selectedDates.push(new Date(currentDateLoop));
+      currentDateLoop.setDate(currentDateLoop.getDate() + 1);
     }
 
     const isOverlap = selectedDates.some(date => isDateBooked(date));
     if (isOverlap) {
-      alert('Выбранные даты уже заняты. Пожалуйста, выберите другие даты.');
+      alert('Выбранные даты уже заняты или пересекаются с занятыми. Пожалуйста, выберите другие даты.');
       return;
     }
 
-    if (user && user.role === 'ROLE_HOSTES') {
-      navigate(`/hostes/rentals/new?roomId=${room.roomId}&checkInDate=${checkInDate.toISOString()}&checkOutDate=${checkOutDate.toISOString()}`);
+    if (!user || !user.id) {
+      alert('Пожалуйста, войдите в систему, чтобы забронировать комнату.');
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+
+    const formattedCheckInDate = formatDateToYYYYMMDD(checkInDate);
+    const formattedCheckOutDate = formatDateToYYYYMMDD(checkOutDate);
+
+    if (user.role === 'ROLE_HOSTES') {
+      navigate(`/hostes/rentals/new?roomId=${room.roomId}&checkInDate=${formattedCheckInDate}&checkOutDate=${formattedCheckOutDate}`);
     } else {
-      const days = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+      const days = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
       const roomPrice = days * room.price;
       const servicesPrice = selectedServices.reduce((total, serviceId) => {
         const service = services.find(s => s.serviceId === serviceId);
@@ -112,8 +150,8 @@ const RoomDetailPage = () => {
       navigate('/payment', {
         state: {
           roomTitle: room.roomTitle,
-          checkInDate: checkInDate.toISOString().split('T')[0],
-          checkOutDate: checkOutDate.toISOString().split('T')[0],
+          checkInDate: formattedCheckInDate,
+          checkOutDate: formattedCheckOutDate,
           totalPrice: totalPrice,
           roomId: room.roomId,
           userId: user.id,
@@ -188,7 +226,7 @@ const RoomDetailPage = () => {
                     dateFormat="dd/MM/yyyy"
                     placeholderText="Выберите дату заезда"
                     minDate={new Date()}
-                    excludeDates={bookedDates}
+                    excludeDates={bookedDates.filter(d => d !== null)}
                     dayClassName={(date) => {
                       if (isDatePast(date)) return 'past-date';
                       if (isDateBooked(date)) return 'booked-date';
@@ -203,8 +241,8 @@ const RoomDetailPage = () => {
                     onChange={(date) => setCheckOutDate(date)}
                     dateFormat="dd/MM/yyyy"
                     placeholderText="Выберите дату выезда"
-                    minDate={checkInDate || new Date()}
-                    excludeDates={bookedDates}
+                    minDate={checkInDate ? new Date(new Date(checkInDate).getTime() + 86400000) : new Date(new Date().getTime() + 86400000)}
+                    excludeDates={bookedDates.filter(d => d !== null)}
                     dayClassName={(date) => {
                       if (isDatePast(date)) return 'past-date';
                       if (isDateBooked(date)) return 'booked-date';
@@ -217,7 +255,7 @@ const RoomDetailPage = () => {
                     Забронировать
                   </button>
               ) : (
-                  <p>Комната забронирована</p>
+                  <p>Комната недоступна для бронирования на выбранные даты или в данный момент.</p>
               )}
             </div>
           </div>
@@ -227,11 +265,12 @@ const RoomDetailPage = () => {
               {services.map(service => (
                   <div
                       key={service.serviceId}
-                      className={`service-card ${selectedServices.includes(service.serviceId) ? 'selected' : ''}`}
+                      className={`service-card-rooms ${selectedServices.includes(service.serviceId) ? 'selected' : ''}`}
                       onClick={() => handleSelectService(service.serviceId)}
                   >
                     <img src={service.imageUrl} alt={service.serviceName} />
                     <h4>{service.serviceName}</h4>
+                    <p>{service.description || "Описание отсутствует"}</p>
                     <p>{service.servicePrice} руб.</p>
                   </div>
               ))}

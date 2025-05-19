@@ -77,7 +77,6 @@ const BookingTable = () => {
 
     return (
         <div className="booking-table-container">
-            <h2 className="booking-table-header">Управление бронированиями</h2>
             <table className="booking-table">
                 <thead>
                 <tr>
@@ -93,44 +92,45 @@ const BookingTable = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {items.map(item => (
-                    <tr key={item.id}>
-                        <td>{item.id}</td>
-                        <td>{item.type === 'booking' ? 'Бронирование' : 'Аренда'}</td>
-                        <td>{item.userOrVisitor}</td>
-                        <td>{item.room}</td>
-                        <td>
-                            {item.services && item.services.length > 0 ? (
-                                <ul>
-                                    {item.services.map(service => (
-                                        <li key={service.serviceId}>{service.serviceName}</li>
-                                    ))}
-                                </ul>
-                            ) : 'Нет услуг'}
-                        </td>
-                        <td>{item.checkInDate}</td>
-                        <td>{item.checkOutDate}</td>
-                        <td>{item.type === 'booking' ? item.status : 'N/A'}</td>
-                        <td>
-                            {item.type === 'booking' ? (
-                                <>
-                                    <select
-                                        value={item.status}
-                                        onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                                    >
-                                        <option value="PENDING">В ОЖИДАНИИ</option>
-                                        <option value="CONFIRMED">ПОДТВЕРЖДЕННЫЙ</option>
-                                        <option value="REJECTED">ОТКЛОНЕННЫЙ</option>
-                                    </select>
-                                    <button onClick={() => handleDeleteBooking(item.id)}>Удалить</button>
-                                </>
-                            ) : (
-                                'Нет действий'
-                            )}
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
+  {items.map(item => (
+    <tr key={item.id}>
+      <td data-label="ID">{item.id}</td>
+      <td data-label="Тип">{item.type === 'booking' ? 'Бронирование' : 'Аренда'}</td>
+      <td data-label="Пользователь/Посетитель">{item.userOrVisitor}</td>
+      <td data-label="Комната">{item.room}</td>
+      <td data-label="Услуги">
+        {item.services && item.services.length > 0 ? (
+          <ul>
+            {item.services.map(service => (
+              <li key={service.serviceId}>{service.serviceName}</li>
+            ))}
+          </ul>
+        ) : 'Нет услуг'}
+      </td>
+      <td data-label="Дата заезда">{item.checkInDate}</td>
+      <td data-label="Дата выезда">{item.checkOutDate}</td>
+      <td data-label="Статус">{item.type === 'booking' ? item.status : 'N/A'}</td>
+      <td data-label="Действия">
+        {item.type === 'booking' ? (
+          <>
+            <select
+              value={item.status}
+              onChange={(e) => handleStatusChange(item.id, e.target.value)}
+            >
+              <option value="PENDING">В ОЖИДАНИИ</option>
+              <option value="CONFIRMED">ПОДТВЕРЖДЕННЫЙ</option>
+              <option value="REJECTED">ОТКЛОНЕННЫЙ</option>
+            </select>
+            <button onClick={() => handleDeleteBooking(item.id)}>Удалить</button>
+          </>
+        ) : (
+          'Нет действий'
+        )}
+      </td>
+    </tr>
+  ))}
+</tbody>
+
             </table>
         </div>
     );

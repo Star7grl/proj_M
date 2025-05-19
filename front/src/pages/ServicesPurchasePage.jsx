@@ -69,7 +69,10 @@ const ServicesPurchasePage = () => {
                             checked={selectedServices.includes(service.serviceId)}
                             onChange={() => handleSelectService(service.serviceId)}
                         />
-                        <span>{service.serviceName} - {service.servicePrice} руб.</span>
+                        <div>
+                            <span>{service.serviceName} - {service.servicePrice} руб.</span>
+                            <p>{service.description || "Описание отсутствует"}</p>
+                        </div>
                     </div>
                 ))}
             </div>
